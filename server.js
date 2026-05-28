@@ -78,7 +78,7 @@ async function handleEvent(event, client) {
 
   let reply = "";
 
-  if (text === "我開通序號") {
+  if (text === "開通") {
     reply = `你的開通序號：\n${userId}\n\n權限：免費會員
 🔒 您尚未開通使用權限
 
