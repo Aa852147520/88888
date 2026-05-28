@@ -1,0 +1,18 @@
+{
+  "name": "line-sports-predictor-bot",
+  "version": "1.0.0",
+  "description": "LINE 體育預測機器人 MVP：賽事分析、勝率預估、風險提示、會員關鍵字回覆",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@line/bot-sdk": "^10.1.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.19.2"
+  }
+}
