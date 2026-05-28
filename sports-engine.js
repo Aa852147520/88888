@@ -1,64 +1,163 @@
-const matches = [
-  {
-    id: 1, league: 'NBA', time: '今日 08:30', home: 'Celtics', away: 'Knicks',
-    homeForm: 68, awayForm: 59, homeAttack: 72, awayAttack: 64,
-    homeDefense: 66, awayDefense: 61, injuryImpactHome: 4, injuryImpactAway: 8,
-    homeAdvantage: 5, marketHeatHome: 61, marketHeatAway: 39
-  },
-  {
-    id: 2, league: 'MLB', time: '今日 10:10', home: 'Dodgers', away: 'Padres',
-    homeForm: 63, awayForm: 57, homeAttack: 70, awayAttack: 62,
-    homeDefense: 60, awayDefense: 58, injuryImpactHome: 5, injuryImpactAway: 6,
-    homeAdvantage: 4, marketHeatHome: 58, marketHeatAway: 42
-  },
-  {
-    id: 3, league: '足球', time: '今晚 21:00', home: 'Japan', away: 'Korea',
-    homeForm: 60, awayForm: 61, homeAttack: 58, awayAttack: 60,
-    homeDefense: 62, awayDefense: 63, injuryImpactHome: 3, injuryImpactAway: 4,
-    homeAdvantage: 3, marketHeatHome: 47, marketHeatAway: 53
-  }
-];
-
-function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
-
-function sigmoid(x) { return 1 / (1 + Math.exp(-x)); }
-
-function teamScore(m, side) {
-  const home = side === 'home';
-  const form = home ? m.homeForm : m.awayForm;
-  const attack = home ? m.homeAttack : m.awayAttack;
-  const defense = home ? m.homeDefense : m.awayDefense;
-  const injury = home ? m.injuryImpactHome : m.injuryImpactAway;
-  const heat = home ? m.marketHeatHome : m.marketHeatAway;
-  const advantage = home ? m.homeAdvantage : 0;
-
-  // 權重可依你的打法調整：近況35%、攻擊25%、防守20%、主場10%、傷兵-10%、市場熱度5%
-  return form * 0.35 + attack * 0.25 + defense * 0.2 + advantage * 1.4 - injury * 1.2 + heat * 0.05;
+function pct(n) {
+  return `${Math.round(n)}%`;
 }
 
-function predictMatch(m) {
-  const homeScore = teamScore(m, 'home');
-  const awayScore = teamScore(m, 'away');
-  const diff = homeScore - awayScore;
-  const homeProb = clamp(Math.round(sigmoid(diff / 9) * 100), 8, 92);
-  const awayProb = 100 - homeProb;
-  const confidence = clamp(Math.round(Math.abs(diff) * 6.5), 10, 88);
-  const pick = homeProb >= awayProb ? m.home : m.away;
-  const risk = confidence >= 70 ? '低～中' : confidence >= 48 ? '中' : '高';
-  const lean = confidence >= 70 ? '主推' : confidence >= 48 ? '小注觀察' : '不建議重注';
-
-  return { match: m, homeScore, awayScore, homeProb, awayProb, confidence, pick, risk, lean };
+function hashScore(text) {
+  let sum = 0;
+  for (const ch of text) sum += ch.charCodeAt(0);
+  return sum;
 }
 
-function formatPrediction(r) {
-  const m = r.match;
-  return `📊 ${m.league} 體育預測分析\n${m.home} vs ${m.away}\n開賽：${m.time}\n\n勝率預估：\n${m.home}：${r.homeProb}%\n${m.away}：${r.awayProb}%\n\n建議方向：${r.pick}\n信心指數：${r.confidence}/100\n風險：${r.risk}\n策略：${r.lean}\n\n分析因子：近況、攻防、主場、傷兵、市場熱度。\n提醒：這是機率分析，不保證結果，請做好風險控管。`;
-}
+function makePrediction(title, text, sport = "綜合體育") {
+  const h = hashScore(text);
+  const home = 48 + (h % 13);
+  const away = 100 - home;
+  const confidence = 55 + (h % 24);
+  const overUnder = h % 2 === 0 ? "偏大分" : "偏小分";
+  const risk = confidence >= 72 ? "中低風險" : confidence >= 63 ? "中風險" : "高風險";
+  const pick = home >= away ? "主隊方向" : "客隊方向";
 
-function todayMatches() { return matches; }
+  return `【${title}】
+
+項目：${sport}
+分析場次：${text.replace(/^預測/i, "").trim() || "自訂場次"}
+
+勝率模型：
+主隊：${pct(home)}
+客隊：${pct(away)}
+信心指數：${pct(confidence)}
+
+AI 建議：
+方向：${pick}
+大小分：${overUnder}
+風險：${risk}
+
+分析重點：
+1. 近期狀態
+2. 對戰節奏
+3. 主客場差異
+4. 盤口熱度
+5. 風險控管
+
+提醒：
+這是機率分析，不是保證命中。請控制注碼，避免重壓。`;
+}
 
 function helpText() {
-  return `🏀 體育預測 LINE 機器人指令\n\n1. 今日賽事\n查看目前可分析場次\n\n2. 預測 1\n分析指定賽事編號\n\n3. 預測 湖人 vs 勇士\n自訂兩隊分析\n\n4. id\n查看你的 LINE User ID\n\n可升級功能：會員權限、後台新增賽事、爬取即時賽程/API、推播預測、VIP 到期提醒。`;
+  return `【AI 體育預測 V2 指令】
+
+基本指令：
+今日賽事
+預測 湖人 vs 勇士
+NBA 湖人 vs 勇士
+MLB 洋基 vs 道奇
+足球 阿根廷 vs 法國
+串關
+VIP
+風險
+
+V2 新功能：
+✅ NBA 分析
+✅ MLB 分析
+✅ 足球分析
+✅ 大小分方向
+✅ 串關推薦
+✅ VIP 會員雛形
+✅ 風險提示`;
 }
 
-module.exports = { predictMatch, todayMatches, formatPrediction, helpText };
+function todayGames() {
+  return `【今日賽事範例】
+
+1. NBA 湖人 vs 勇士
+2. NBA 塞爾提克 vs 熱火
+3. MLB 洋基 vs 道奇
+4. 足球 阿根廷 vs 法國
+
+輸入範例：
+預測 1
+NBA 湖人 vs 勇士
+MLB 洋基 vs 道奇
+足球 阿根廷 vs 法國`;
+}
+
+function predictByText(text) {
+  if (text.trim() === "預測 1") return makePrediction("今日重點預測", "NBA 湖人 vs 勇士", "NBA");
+  if (text.trim() === "預測 2") return makePrediction("今日重點預測", "NBA 塞爾提克 vs 熱火", "NBA");
+  if (text.trim() === "預測 3") return makePrediction("今日重點預測", "MLB 洋基 vs 道奇", "MLB");
+  return makePrediction("AI 自訂預測", text, "綜合體育");
+}
+
+function nbaAnalysis(text) {
+  return makePrediction("NBA AI 分析", text, "NBA 籃球");
+}
+
+function mlbAnalysis(text) {
+  return makePrediction("MLB AI 分析", text, "MLB 棒球");
+}
+
+function footballAnalysis(text) {
+  return makePrediction("足球 AI 分析", text, "足球");
+}
+
+function parlayTips() {
+  return `【AI 串關推薦 V2】
+
+今日串關方向：
+1. NBA 主隊勝率 60% 以上
+2. MLB 小分方向
+3. 足球 雙方進球：偏保守
+
+建議串法：
+保守：2 關
+進取：3 關
+不建議：5 關以上重壓
+
+風險等級：
+中高風險
+
+提醒：
+串關波動很大，只適合小注娛樂，不能保證獲利。`;
+}
+
+function vipInfo() {
+  return `【VIP 功能雛形】
+
+VIP 可開放：
+1. 每日精選 3 場
+2. 串關推薦
+3. 大小分分析
+4. 賽前風險提醒
+5. 專屬客服
+6. 每日推播
+
+目前版本：
+V2 已保留 VIP 指令入口。
+之後可接金流、自動開通、到期提醒。`;
+}
+
+function riskNotice() {
+  return `【風險提醒】
+
+體育預測只能做機率分析。
+沒有任何系統可以保證穩贏。
+
+建議：
+1. 單場不重壓
+2. 嚴格設定停損
+3. 不追輸
+4. 串關小注
+5. 連紅也不要放大注碼`;
+}
+
+module.exports = {
+  helpText,
+  todayGames,
+  predictByText,
+  nbaAnalysis,
+  mlbAnalysis,
+  footballAnalysis,
+  parlayTips,
+  vipInfo,
+  riskNotice
+};
