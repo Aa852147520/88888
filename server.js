@@ -108,7 +108,7 @@ async function handleEvent(event, client) {
     const parts = text.split(/\s+/);
     const target = parts[1];
     const days = Number(parts[2] || 30);
-    if (!target) reply = "格式：開通VIP LINE_USER_ID 天數\n例如：開通VIP Uxxxxxxxx 30";
+    if (!target) reply = "格式：開通VIP LINE_USER_ID 天數\n例如：開通VIP Uxxxxxxxx 30天";
     else {
       const exp = addVip(target, days);
       reply = `已開通 VIP ✅\nUser ID：${target}\n到期日：${exp}`;
