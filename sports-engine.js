@@ -177,8 +177,9 @@ function vipInfo() {
 開通方式：
 請聯絡客服人工開通。
 
-
-管理員官方LINE：@058gvokk
+管理員可用：
+開通VIP USER_ID 30`;
+}
 
 module.exports = {
   helpText,
