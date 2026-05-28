@@ -1,7 +1,7 @@
 {
-  "name": "line-sports-predictor-v2",
-  "version": "2.0.0",
-  "description": "LINE AI Sports Predictor Bot V2",
+  "name": "line-sports-predictor-v3",
+  "version": "3.0.0",
+  "description": "LINE AI Sports Predictor Bot V3 SaaS MVP",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

@@ -1,27 +1,59 @@
 require("dotenv").config();
 const express = require("express");
 const line = require("@line/bot-sdk");
-const {
-  helpText,
-  todayGames,
-  predictByText,
-  nbaAnalysis,
-  mlbAnalysis,
-  footballAnalysis,
-  parlayTips,
-  vipInfo,
-  riskNotice
-} = require("./sports-engine");
+const fs = require("fs");
+const path = require("path");
+const engine = require("./sports-engine");
 
 const config = {
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
   channelSecret: process.env.LINE_CHANNEL_SECRET,
 };
 
+const ADMIN_USER_ID = process.env.ADMIN_USER_ID || "";
+const VIP_FILE = path.join(__dirname, "vip-users.json");
+
 const app = express();
 
+function loadVipUsers() {
+  try {
+    return JSON.parse(fs.readFileSync(VIP_FILE, "utf8"));
+  } catch {
+    return {};
+  }
+}
+
+function saveVipUsers(data) {
+  fs.writeFileSync(VIP_FILE, JSON.stringify(data, null, 2), "utf8");
+}
+
+function isVip(userId) {
+  const vip = loadVipUsers();
+  const exp = vip[userId];
+  if (!exp) return false;
+  return new Date(exp).getTime() >= Date.now();
+}
+
+function addVip(userId, days = 30) {
+  const vip = loadVipUsers();
+  const expire = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+  vip[userId] = expire.toISOString().slice(0, 10);
+  saveVipUsers(vip);
+  return vip[userId];
+}
+
+function removeVip(userId) {
+  const vip = loadVipUsers();
+  delete vip[userId];
+  saveVipUsers(vip);
+}
+
 app.get("/", (req, res) => {
-  res.send("LINE Sports Predictor Bot V2 is running. Webhook: /webhook");
+  res.send("LINE Sports Predictor Bot V3 SaaS MVP is running. Webhook: /webhook");
+});
+
+app.get("/health", (req, res) => {
+  res.json({ ok: true, version: "v3", time: new Date().toISOString() });
 });
 
 app.post("/webhook", line.middleware(config), async (req, res) => {
@@ -40,46 +72,76 @@ async function handleEvent(event, client) {
   if (event.type !== "message" || event.message.type !== "text") return;
 
   const text = event.message.text.trim();
+  const userId = event.source.userId || "";
+  const vip = isVip(userId);
+  const isAdmin = ADMIN_USER_ID && userId === ADMIN_USER_ID;
+
   let reply = "";
 
-  if (["說明", "help", "功能"].includes(text.toLowerCase())) {
-    reply = helpText();
-  } else if (text.includes("今日賽事")) {
-    reply = todayGames();
-  } else if (text.toLowerCase().includes("nba")) {
-    reply = nbaAnalysis(text);
-  } else if (text.toLowerCase().includes("mlb")) {
-    reply = mlbAnalysis(text);
-  } else if (text.includes("足球") || text.toLowerCase().includes("football") || text.toLowerCase().includes("soccer")) {
-    reply = footballAnalysis(text);
+  if (text === "我的ID") {
+    reply = `你的 LINE User ID：\n${userId}\n\n把這串設成 ADMIN_USER_ID，就能使用管理員指令。`;
+  } else if (text === "說明" || text.toLowerCase() === "help") {
+    reply = engine.helpText(vip, isAdmin);
+  } else if (text === "今日賽事") {
+    reply = engine.todayGames();
+  } else if (text === "每日精選") {
+    reply = vip ? engine.vipDailyPicks() : engine.needVip();
   } else if (text.includes("串關")) {
-    reply = parlayTips();
-  } else if (text.toLowerCase().includes("vip") || text.includes("加入VIP") || text.includes("加入vip")) {
-    reply = vipInfo();
+    reply = vip ? engine.vipParlay() : engine.needVip();
+  } else if (text.includes("大小分")) {
+    reply = vip ? engine.overUnderAnalysis(text) : engine.needVip();
+  } else if (text.toLowerCase().includes("nba")) {
+    reply = engine.nbaAnalysis(text, vip);
+  } else if (text.toLowerCase().includes("mlb")) {
+    reply = engine.mlbAnalysis(text, vip);
+  } else if (text.includes("足球") || text.toLowerCase().includes("football") || text.toLowerCase().includes("soccer")) {
+    reply = engine.footballAnalysis(text, vip);
   } else if (text.startsWith("預測")) {
-    reply = predictByText(text);
-  } else if (text.includes("風險")) {
-    reply = riskNotice();
+    reply = engine.predictByText(text, vip);
+  } else if (text === "VIP" || text === "加入VIP") {
+    reply = engine.vipInfo();
+  } else if (text === "我的狀態") {
+    reply = vip ? `你目前是 VIP 會員 ✅` : `你目前不是 VIP 會員。輸入「加入VIP」查看方案。`;
+  } else if (isAdmin && text.startsWith("開通VIP")) {
+    const parts = text.split(/\s+/);
+    const target = parts[1];
+    const days = Number(parts[2] || 30);
+    if (!target) reply = "格式：開通VIP LINE_USER_ID 天數\n例如：開通VIP Uxxxxxxxx 30";
+    else {
+      const exp = addVip(target, days);
+      reply = `已開通 VIP ✅\nUser ID：${target}\n到期日：${exp}`;
+    }
+  } else if (isAdmin && text.startsWith("取消VIP")) {
+    const parts = text.split(/\s+/);
+    const target = parts[1];
+    if (!target) reply = "格式：取消VIP LINE_USER_ID";
+    else {
+      removeVip(target);
+      reply = `已取消 VIP：${target}`;
+    }
+  } else if (isAdmin && text === "VIP名單") {
+    reply = "【VIP 名單】\n" + JSON.stringify(loadVipUsers(), null, 2);
   } else {
     reply = `收到：「${text}」
 
-你可以輸入：
-1. 說明
-2. 今日賽事
-3. NBA 湖人 vs 勇士
-4. MLB 洋基 vs 道奇
-5. 足球 阿根廷 vs 法國
-6. 串關
-7. VIP`;
+可輸入：
+說明
+今日賽事
+預測 湖人 vs 勇士
+NBA 湖人 vs 勇士
+MLB 洋基 vs 道奇
+足球 阿根廷 vs 法國
+大小分 湖人 vs 勇士
+每日精選
+串關
+我的狀態
+加入VIP`;
   }
 
-  return client.replyMessage(event.replyToken, {
-    type: "text",
-    text: reply
-  });
+  return client.replyMessage(event.replyToken, { type: "text", text: reply });
 }
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`✅ LINE Sports Predictor Bot V2 running on port ${port}`);
+  console.log(`✅ LINE Sports Predictor Bot V3 SaaS MVP running on port ${port}`);
 });

@@ -1,0 +1,18 @@
+V2 升級 V3 步驟：
+
+1. 解壓縮 line-sports-predictor-v3.zip
+2. 到 GitHub 原本專案
+3. 刪掉舊檔案
+4. 上傳 V3 所有檔案
+5. Commit changes
+6. 到 Render
+7. Environment 新增：
+   ADMIN_USER_ID=先空著也可以
+8. Manual Deploy → Deploy latest commit
+9. 到 LINE 對機器人輸入：我的ID
+10. 把回傳 ID 貼到 Render 的 ADMIN_USER_ID
+11. 再 Manual Deploy 一次
+12. 測試：
+    說明
+    每日精選
+    加入VIP

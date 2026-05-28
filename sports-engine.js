@@ -8,7 +8,7 @@ function hashScore(text) {
   return sum;
 }
 
-function makePrediction(title, text, sport = "綜合體育") {
+function makePrediction(title, text, sport = "綜合體育", vip = false) {
   const h = hashScore(text);
   const home = 48 + (h % 13);
   const away = 100 - home;
@@ -16,6 +16,17 @@ function makePrediction(title, text, sport = "綜合體育") {
   const overUnder = h % 2 === 0 ? "偏大分" : "偏小分";
   const risk = confidence >= 72 ? "中低風險" : confidence >= 63 ? "中風險" : "高風險";
   const pick = home >= away ? "主隊方向" : "客隊方向";
+  const vipExtra = vip ? `
+
+VIP 進階分析：
+1. 建議注碼：小注 1 單位
+2. 進場時間：賽前 30~60 分鐘觀察盤口
+3. 避免條件：臨場主力缺陣、盤口劇烈反向
+4. 串關建議：可作為 2 關其中一關` : `
+
+免費版提醒：
+此場只顯示基礎分析。
+輸入「加入VIP」可看每日精選、串關、大小分進階分析。`;
 
   return `【${title}】
 
@@ -37,33 +48,32 @@ AI 建議：
 2. 對戰節奏
 3. 主客場差異
 4. 盤口熱度
-5. 風險控管
+5. 風險控管${vipExtra}
 
 提醒：
 這是機率分析，不是保證命中。請控制注碼，避免重壓。`;
 }
 
-function helpText() {
-  return `【AI 體育預測 V2 指令】
+function helpText(vip, isAdmin) {
+  return `【AI 體育預測 V3 指令】
 
-基本指令：
+基本：
 今日賽事
 預測 湖人 vs 勇士
 NBA 湖人 vs 勇士
 MLB 洋基 vs 道奇
 足球 阿根廷 vs 法國
-串關
-VIP
-風險
+我的狀態
+加入VIP
 
-V2 新功能：
-✅ NBA 分析
-✅ MLB 分析
-✅ 足球分析
-✅ 大小分方向
-✅ 串關推薦
-✅ VIP 會員雛形
-✅ 風險提示`;
+VIP：
+每日精選
+串關
+大小分 湖人 vs 勇士
+
+目前身分：
+${vip ? "VIP 會員 ✅" : "免費會員"}
+${isAdmin ? "\n管理員指令：\n我的ID\n開通VIP USER_ID 30\n取消VIP USER_ID\nVIP名單" : ""}`;
 }
 
 function todayGames() {
@@ -74,80 +84,101 @@ function todayGames() {
 3. MLB 洋基 vs 道奇
 4. 足球 阿根廷 vs 法國
 
-輸入範例：
+輸入：
 預測 1
 NBA 湖人 vs 勇士
-MLB 洋基 vs 道奇
-足球 阿根廷 vs 法國`;
+每日精選
+串關`;
 }
 
-function predictByText(text) {
-  if (text.trim() === "預測 1") return makePrediction("今日重點預測", "NBA 湖人 vs 勇士", "NBA");
-  if (text.trim() === "預測 2") return makePrediction("今日重點預測", "NBA 塞爾提克 vs 熱火", "NBA");
-  if (text.trim() === "預測 3") return makePrediction("今日重點預測", "MLB 洋基 vs 道奇", "MLB");
-  return makePrediction("AI 自訂預測", text, "綜合體育");
+function predictByText(text, vip) {
+  if (text.trim() === "預測 1") return makePrediction("今日重點預測", "NBA 湖人 vs 勇士", "NBA", vip);
+  if (text.trim() === "預測 2") return makePrediction("今日重點預測", "NBA 塞爾提克 vs 熱火", "NBA", vip);
+  if (text.trim() === "預測 3") return makePrediction("今日重點預測", "MLB 洋基 vs 道奇", "MLB", vip);
+  return makePrediction("AI 自訂預測", text, "綜合體育", vip);
 }
 
-function nbaAnalysis(text) {
-  return makePrediction("NBA AI 分析", text, "NBA 籃球");
+function nbaAnalysis(text, vip) {
+  return makePrediction("NBA AI 分析", text, "NBA 籃球", vip);
 }
 
-function mlbAnalysis(text) {
-  return makePrediction("MLB AI 分析", text, "MLB 棒球");
+function mlbAnalysis(text, vip) {
+  return makePrediction("MLB AI 分析", text, "MLB 棒球", vip);
 }
 
-function footballAnalysis(text) {
-  return makePrediction("足球 AI 分析", text, "足球");
+function footballAnalysis(text, vip) {
+  return makePrediction("足球 AI 分析", text, "足球", vip);
 }
 
-function parlayTips() {
-  return `【AI 串關推薦 V2】
+function vipDailyPicks() {
+  return `【VIP 每日精選】
 
-今日串關方向：
-1. NBA 主隊勝率 60% 以上
+1. NBA 湖人 vs 勇士
+方向：主隊 + 小分
+信心：72%
+風險：中風險
+
+2. MLB 洋基 vs 道奇
+方向：客隊 + 小分
+信心：68%
+風險：中風險
+
+3. 足球 阿根廷 vs 法國
+方向：雙方進球偏保守
+信心：64%
+風險：中高風險
+
+下注建議：
+單場小注，不追輸，不凹單。`;
+}
+
+function vipParlay() {
+  return `【VIP 串關推薦】
+
+保守 2 關：
+1. NBA 主隊方向
 2. MLB 小分方向
-3. 足球 雙方進球：偏保守
 
-建議串法：
-保守：2 關
-進取：3 關
-不建議：5 關以上重壓
+進取 3 關：
+1. NBA 主隊方向
+2. MLB 小分方向
+3. 足球 保守小球方向
 
-風險等級：
-中高風險
+風險：
+串關屬於高波動，建議小注。`;
+}
 
-提醒：
-串關波動很大，只適合小注娛樂，不能保證獲利。`;
+function overUnderAnalysis(text) {
+  return makePrediction("VIP 大小分分析", text, "大小分", true);
+}
+
+function needVip() {
+  return `此功能為 VIP 專屬 🔒
+
+可解鎖：
+1. 每日精選
+2. 串關推薦
+3. 大小分進階分析
+4. 風險等級
+5. 每日推播
+
+輸入「加入VIP」查看方案。`;
 }
 
 function vipInfo() {
-  return `【VIP 功能雛形】
+  return `【VIP 方案】
 
-VIP 可開放：
-1. 每日精選 3 場
-2. 串關推薦
-3. 大小分分析
-4. 賽前風險提醒
-5. 專屬客服
-6. 每日推播
+月費 VIP：
+每日精選 3 場
+串關推薦
+大小分分析
+風險控管提醒
 
-目前版本：
-V2 已保留 VIP 指令入口。
-之後可接金流、自動開通、到期提醒。`;
-}
+開通方式：
+請聯絡客服人工開通。
 
-function riskNotice() {
-  return `【風險提醒】
-
-體育預測只能做機率分析。
-沒有任何系統可以保證穩贏。
-
-建議：
-1. 單場不重壓
-2. 嚴格設定停損
-3. 不追輸
-4. 串關小注
-5. 連紅也不要放大注碼`;
+管理員可用：
+開通VIP USER_ID 30`;
 }
 
 module.exports = {
@@ -157,7 +188,9 @@ module.exports = {
   nbaAnalysis,
   mlbAnalysis,
   footballAnalysis,
-  parlayTips,
-  vipInfo,
-  riskNotice
+  vipDailyPicks,
+  vipParlay,
+  overUnderAnalysis,
+  needVip,
+  vipInfo
 };
