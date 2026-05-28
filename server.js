@@ -79,7 +79,7 @@ async function handleEvent(event, client) {
   let reply = "";
 
   if (text === "我的ID") {
-    reply = `你的 LINE User ID：\n${userId}\n\n把這串設成 ADMIN_USER_ID，就能使用管理員指令。`;
+    reply = `你的帳號ID序號：\n${userId}\n\n請聯絡管理員開通，管理員官方LINE:@058gvokk`;
   } else if (text === "說明" || text.toLowerCase() === "help") {
     reply = engine.helpText(vip, isAdmin);
   } else if (text === "今日賽事") {
