@@ -1,7 +1,7 @@
 {
-  "name": "line-football-ai-v8-1-zh-full",
-  "version": "8.1.0",
-  "description": "LINE Football AI V8.1 full Traditional Chinese display using Football-Data.org",
+  "name": "line-football-ai-final",
+  "version": "9.0.0",
+  "description": "LINE Football AI Final Commercial Version with Football-Data.org, Supabase VIP, Chinese UI, admin tools",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

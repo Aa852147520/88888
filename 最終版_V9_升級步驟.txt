@@ -1,0 +1,34 @@
+最終版 V9 升級步驟：
+
+1. 解壓縮 line-football-ai-final.zip
+2. 到 GitHub 原本專案
+3. 刪除舊檔案
+4. 上傳 V9 全部檔案
+5. Commit changes
+
+6. 到 Render → Environment
+確認有：
+LINE_CHANNEL_ACCESS_TOKEN
+LINE_CHANNEL_SECRET
+ADMIN_USER_ID
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+FOOTBALL_DATA_KEY
+
+7. Render → Manual Deploy → Deploy latest commit
+
+8. LINE 測試：
+說明
+API狀態
+我的狀態
+足球分析 皇馬 vs 巴薩
+今日足球
+英超積分榜
+進階分析 曼城 vs 利物浦
+最近5場 曼城
+對戰紀錄 曼城 vs 利物浦
+主客場 曼城 vs 利物浦
+今日主推
+足球串關
+VIP統計
+即將到期
