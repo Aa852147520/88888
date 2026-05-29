@@ -4,7 +4,7 @@ const line = require("@line/bot-sdk");
 const { createClient } = require("@supabase/supabase-js");
 const engine = require("./sports-engine");
 const live = require("./live-games");
-const worldcup = require("./worldcup-engine");
+const footballApi = require("./api-football-engine");
 
 const config = {
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
@@ -71,11 +71,16 @@ async function listVip() {
 }
 
 app.get("/", (req, res) => {
-  res.send("LINE Sports Predictor Bot V6 World Cup is running. Webhook: /webhook");
+  res.send("LINE Sports Predictor Bot V6.1 API-Football is running. Webhook: /webhook");
 });
 
 app.get("/health", (req, res) => {
-  res.json({ ok: true, version: "v6-worldcup", time: new Date().toISOString() });
+  res.json({
+    ok: true,
+    version: "v6.1-api-football",
+    apiFootball: !!process.env.API_FOOTBALL_KEY,
+    time: new Date().toISOString()
+  });
 });
 
 app.post("/webhook", line.middleware(config), async (req, res) => {
@@ -106,27 +111,43 @@ async function handleEvent(event, client) {
     } else if (text === "說明" || text.toLowerCase() === "help") {
       reply = engine.helpText(vip, isAdmin);
 
+    // API-Football / 足球資料
+    } else if (text === "API狀態") {
+      reply = await footballApi.apiStatus();
+    } else if (text === "今日足球") {
+      reply = await footballApi.todayFootball();
+    } else if (text === "即時比分" || text === "足球比分") {
+      reply = await footballApi.liveScores();
+    } else if (text === "英超積分榜") {
+      reply = await footballApi.standings("PL");
+    } else if (text === "西甲積分榜") {
+      reply = await footballApi.standings("PD");
+    } else if (text === "義甲積分榜") {
+      reply = await footballApi.standings("SA");
+    } else if (text === "德甲積分榜") {
+      reply = await footballApi.standings("BL1");
+    } else if (text === "法甲積分榜") {
+      reply = await footballApi.standings("FL1");
+
     // 世界盃專區
     } else if (text === "世界盃" || text === "世界盃說明") {
-      reply = worldcup.worldCupHelp(vip);
+      reply = footballApi.worldCupHelp(vip);
     } else if (text === "今日世界盃") {
-      reply = await worldcup.todayWorldCup();
+      reply = await footballApi.todayWorldCup();
     } else if (text === "世界盃賽程") {
-      reply = worldcup.worldCupSchedule();
+      reply = await footballApi.worldCupSchedule();
     } else if (text === "世界盃積分榜") {
-      reply = worldcup.worldCupStandings();
-    } else if (text === "世界盃淘汰賽") {
-      reply = worldcup.worldCupKnockout();
+      reply = await footballApi.worldCupStandings();
     } else if (text === "世界盃主推") {
-      reply = vip ? worldcup.worldCupMainPick() : engine.needVip();
+      reply = vip ? footballApi.worldCupMainPick() : engine.needVip();
     } else if (text === "世界盃串關") {
-      reply = vip ? worldcup.worldCupParlay() : engine.needVip();
+      reply = vip ? footballApi.worldCupParlay() : engine.needVip();
     } else if (text === "爆冷預警" || text === "世界盃爆冷預警") {
-      reply = vip ? worldcup.worldCupUpsetAlert() : engine.needVip();
+      reply = vip ? footballApi.worldCupUpsetAlert() : engine.needVip();
     } else if (text.startsWith("世界盃")) {
-      reply = worldcup.worldCupPrediction(text.replace("世界盃", "").trim(), vip);
+      reply = footballApi.worldCupPrediction(text.replace("世界盃", "").trim(), vip);
 
-    // 即時賽事
+    // 原本即時賽事
     } else if (text === "今日賽事" || text === "今日即時賽事") {
       reply = await live.todayAllGames();
     } else if (text.toUpperCase() === "今日NBA") {
@@ -137,8 +158,6 @@ async function handleEvent(event, client) {
       reply = await live.todayGamesBySport("NFL");
     } else if (text.toUpperCase() === "今日NHL") {
       reply = await live.todayGamesBySport("NHL");
-    } else if (text === "今日足球") {
-      reply = await live.todayGamesBySport("SOCCER");
     } else if (text.startsWith("即時分析")) {
       reply = await live.livePrediction(text.replace("即時分析", "").trim(), vip);
 
@@ -184,17 +203,17 @@ async function handleEvent(event, client) {
       reply = `收到：「${text}」
 
 可輸入：
+API狀態
+今日足球
+即時比分
+英超積分榜
 世界盃
 今日世界盃
 世界盃賽程
 世界盃 巴西 vs 阿根廷
 世界盃主推
-世界盃串關
-爆冷預警
-今日即時賽事
 今日NBA
-今日MLB
-即時分析 湖人 vs 勇士`;
+今日MLB`;
     }
   } catch (err) {
     console.error("Command error:", err);
@@ -205,4 +224,4 @@ async function handleEvent(event, client) {
 }
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`✅ LINE Sports Predictor Bot V6 World Cup running on port ${port}`));
+app.listen(port, () => console.log(`✅ LINE Sports Predictor Bot V6.1 API-Football running on port ${port}`));

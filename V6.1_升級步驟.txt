@@ -1,0 +1,25 @@
+V6.1 API-Football 升級步驟：
+
+1. 解壓縮 line-sports-predictor-v6-1-api-football.zip
+2. 到 GitHub 原本專案
+3. 刪除舊檔案
+4. 上傳 V6.1 全部檔案
+5. Commit changes
+6. 到 Render → Environment
+7. 確認有：
+   API_FOOTBALL_KEY=你的API金鑰
+8. Manual Deploy → Deploy latest commit
+9. 等 Render 顯示 Live
+10. LINE 測試：
+
+API狀態
+今日足球
+即時比分
+英超積分榜
+世界盃
+今日世界盃
+世界盃賽程
+
+注意：
+如果世界盃還沒開打或免費方案沒有該賽事，API 可能回傳空資料。
+這時「世界盃 巴西 vs 阿根廷」分析模型仍可使用。

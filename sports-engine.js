@@ -31,47 +31,52 @@ AI 建議：
 }
 
 function helpText(vip, isAdmin) {
-  return `【AI 體育預測 V6 指令】
+  return `【AI 體育預測 V6.1 指令】
+
+足球 API：
+API狀態
+今日足球
+即時比分
+英超積分榜
+西甲積分榜
+義甲積分榜
+德甲積分榜
+法甲積分榜
 
 世界盃：
 世界盃
 今日世界盃
 世界盃賽程
+世界盃積分榜
 世界盃 巴西 vs 阿根廷
 世界盃主推
 世界盃串關
 爆冷預警
 
-即時賽事：
+其他即時賽事：
 今日即時賽事
 今日NBA
 今日MLB
 今日NFL
 今日NHL
-今日足球
-即時分析 湖人 vs 勇士
 
 VIP：
 每日精選
 串關
 大小分 湖人 vs 勇士
 
-會員：
-我的狀態
-加入VIP
-
 目前身分：
 ${vip ? "VIP 會員 ✅" : "免費會員"}
 ${isAdmin ? "\n管理員：\n我的ID\n開通VIP USER_ID 30\n取消VIP USER_ID\nVIP名單" : ""}`;
 }
 
-function todayGames() { return "請輸入：\n今日即時賽事\n今日NBA\n今日MLB\n今日足球\n今日世界盃"; }
+function todayGames() { return "請輸入：\n今日足球\n即時比分\n今日NBA\n今日MLB\n今日世界盃"; }
 function predictByText(text, vip) { return makePrediction("AI 自訂預測", text, "綜合體育", vip); }
 function nbaAnalysis(text, vip) { return makePrediction("NBA AI 分析", text, "NBA 籃球", vip); }
 function mlbAnalysis(text, vip) { return makePrediction("MLB AI 分析", text, "MLB 棒球", vip); }
 function footballAnalysis(text, vip) { return makePrediction("足球 AI 分析", text, "足球", vip); }
-function vipDailyPicks() { return "【VIP 每日精選】\n\n1. 今日 NBA 強勢方\n方向：主隊方向\n信心：72%\n\n2. 今日 MLB 小分場\n方向：小分\n信心：68%\n\n3. 世界盃焦點場\n方向：小球 / 不敗方向\n信心：70%\n\n提醒：請搭配「今日即時賽事」確認開賽時間。"; }
-function vipParlay() { return "【VIP 串關推薦】\n\n保守 2 關：\n1. NBA 主隊方向\n2. 世界盃 小球方向\n\n進取 3 關：\n1. NBA 主隊方向\n2. MLB 小分方向\n3. 世界盃 不敗方向\n\n串關高波動，建議小注。"; }
+function vipDailyPicks() { return "【VIP 每日精選】\n\n1. 今日足球強勢方\n方向：不敗 / 小球觀察\n信心：70%\n\n2. 今日 NBA 強勢方\n方向：主隊方向\n信心：72%\n\n3. 今日 MLB 小分場\n方向：小分\n信心：68%\n\n提醒：請搭配「今日足球 / 即時比分」確認開賽時間。"; }
+function vipParlay() { return "【VIP 串關推薦】\n\n保守 2 關：\n1. 足球 不敗方向\n2. NBA 主隊方向\n\n進取 3 關：\n1. 足球 小球方向\n2. NBA 主隊方向\n3. MLB 小分方向\n\n串關高波動，建議小注。"; }
 function overUnderAnalysis(text) { return makePrediction("VIP 大小分分析", text, "大小分", true); }
 function needVip() { return "此功能為 VIP 專屬 🔒\n\n可解鎖：\n每日精選\n世界盃主推\n串關推薦\n大小分進階分析\n爆冷預警\n\n輸入「加入VIP」查看方案。"; }
 function vipInfo() { return "【VIP 方案】\n\n可看：\n1. 每日精選\n2. 世界盃主推\n3. 世界盃串關\n4. 爆冷預警\n5. 大小分分析\n\n請聯絡客服開通。"; }

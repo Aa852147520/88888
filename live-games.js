@@ -2,11 +2,10 @@ const ESPN = {
   NBA: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard",
   MLB: "https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard",
   NFL: "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard",
-  NHL: "https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard",
-  SOCCER: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard"
+  NHL: "https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard"
 };
 
-const SPORT_NAME = { NBA: "NBA", MLB: "MLB", NFL: "NFL", NHL: "NHL", SOCCER: "英超足球" };
+const SPORT_NAME = { NBA: "NBA", MLB: "MLB", NFL: "NFL", NHL: "NHL" };
 
 function twDate(dateStr) {
   const d = new Date(dateStr);
@@ -21,7 +20,7 @@ function twDate(dateStr) {
 }
 
 async function fetchJson(url) {
-  const res = await fetch(url, { headers: { "user-agent": "line-sports-predictor-v6" } });
+  const res = await fetch(url, { headers: { "user-agent": "line-sports-predictor-v6-1" } });
   if (!res.ok) throw new Error(`API ${res.status}`);
   return await res.json();
 }
@@ -54,7 +53,7 @@ ${list.join("\n\n")}
 }
 
 async function todayAllGames() {
-  const keys = ["NBA", "MLB", "NFL", "NHL", "SOCCER"];
+  const keys = ["NBA", "MLB", "NFL", "NHL"];
   const chunks = [];
   for (const key of keys) {
     try {
@@ -69,12 +68,15 @@ async function todayAllGames() {
 
 ${chunks.join("\n\n")}
 
+足球請輸入：
+今日足球
+即時比分
+
 單項查詢：
 今日NBA
 今日MLB
 今日NFL
-今日NHL
-今日足球`;
+今日NHL`;
 }
 
 function quickHash(text) {
@@ -109,7 +111,7 @@ ${ou}
 ${vip ? "VIP提醒：可搭配每日精選與串關，不建議重壓。" : "免費版提醒：VIP 可看每日精選與串關。"}
 
 注意：
-即時賽事來自公開 scoreboard，預測為模型估算，不保證命中。`;
+預測為模型估算，不保證命中。`;
 }
 
 module.exports = { todayAllGames, todayGamesBySport, livePrediction };
