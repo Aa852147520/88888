@@ -60,7 +60,7 @@ VIP 專屬：
 
 目前身分：
 ${vip ? "VIP 會員 ✅" : "免費會員"}
-${isAdmin ? "\n管理員：\n我的ID\n開通VIP USER_ID 30\n取消VIP USER_ID\nVIP名單\nAPI狀態" : ""}`;
+${isAdmin ? "\n管理員：\n開通\n開通VIP USER_ID 30\n取消VIP USER_ID\nVIP名單\nAPI狀態" : ""}`;
 }
 
 function todayGames() { return "VIP 可查：今日足球、即時比分、今日世界盃、今日NBA、今日MLB"; }
@@ -107,8 +107,8 @@ VIP 解鎖：
 開通方式：
 請聯絡客服人工開通。
 
-管理員指令：
-開通VIP USER_ID 30`;
+請聯繫管理員
+: @058gvokk`;
 }
 
 module.exports = { helpText, todayGames, predictByText, nbaAnalysis, mlbAnalysis, footballAnalysis, vipDailyPicks, vipParlay, overUnderAnalysis, needVip, vipInfo };
