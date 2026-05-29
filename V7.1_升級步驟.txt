@@ -1,0 +1,15 @@
+V7.1 中文隊名版升級步驟：
+
+1. 解壓縮 line-football-ai-v7-1-zh-teams.zip
+2. 到 GitHub 原本專案
+3. 刪除舊檔案
+4. 上傳 V7.1 全部檔案
+5. Commit changes
+6. 到 Render
+7. Manual Deploy → Deploy latest commit
+8. LINE 測試：
+   即時比分
+   今日足球
+   英超積分榜
+
+如果遇到沒翻譯到的隊伍，把英文隊名傳給我，我可以再加進 TEAM_ZH。

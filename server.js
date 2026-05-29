@@ -45,10 +45,7 @@ async function addVip(userId, days = 30) {
 }
 
 async function removeVip(userId) {
-  const { error } = await supabase.from("vip_users").update({
-    status: "inactive",
-    updated_at: new Date().toISOString()
-  }).eq("user_id", userId);
+  const { error } = await supabase.from("vip_users").update({ status: "inactive", updated_at: new Date().toISOString() }).eq("user_id", userId);
   if (error) throw error;
 }
 
@@ -68,8 +65,6 @@ VIP 可使用：
 ✅ 今日主推
 ✅ 足球串關
 ✅ 爆冷預警
-✅ 世界盃賽程
-✅ 世界盃積分榜
 
 請聯絡客服開通 VIP。`;
 }
@@ -84,19 +79,16 @@ VIP 解鎖：
 4. 今日主推
 5. 足球串關
 6. 爆冷預警
-7. 世界盃專區
-8. 進階足球 AI 分析
 
-開通管理員LINE：
-@058gvokk`;
+管理員開通：
+開通VIP USER_ID 30`;
 }
 
 function helpText(vip, isAdmin) {
-  return `【⚽ 足球 AI 預測 】
+  return `【⚽ 足球 AI 預測 V7.1 中文隊名版】
 
 免費可用：
 足球分析 皇馬 vs 巴薩
-足球分析 曼城 vs 利物浦
 世界盃 巴西 vs 阿根廷
 加入VIP
 我的狀態
@@ -112,21 +104,18 @@ VIP 專屬：
 今日主推
 足球串關
 爆冷預警
-今日世界盃
-世界盃賽程
-世界盃積分榜
 
 目前身分：
 ${vip ? "VIP 會員 ✅" : "免費會員"}
-${isAdmin ? "\n管理員：\n我的ID\n開通VIP USER_ID 30\n取消VIP USER_ID\nVIP名單\nAPI狀態" : ""}`;
+${isAdmin ? "\n管理員：我的ID / 開通VIP / 取消VIP / VIP名單 / API狀態" : ""}`;
 }
 
 function vipOnly(vip, fn) {
   return vip ? fn() : Promise.resolve(needVip());
 }
 
-app.get("/", (req, res) => res.send("LINE Football AI V7 is running. Webhook: /webhook"));
-app.get("/health", (req, res) => res.json({ ok: true, version: "v7-football-only", apiFootball: !!process.env.API_FOOTBALL_KEY }));
+app.get("/", (req, res) => res.send("LINE Football AI V7.1 ZH Teams is running. Webhook: /webhook"));
+app.get("/health", (req, res) => res.json({ ok: true, version: "v7.1-zh-teams", apiFootball: !!process.env.API_FOOTBALL_KEY }));
 
 app.post("/webhook", line.middleware(config), async (req, res) => {
   try {
@@ -151,8 +140,7 @@ async function handleEvent(event, client) {
 
   try {
     if (text === "說明" || text.toLowerCase() === "help") reply = helpText(vip, isAdmin);
-    else if (text === "開通") reply = `你的開通密鑰：\n${userId} 
-    請聯絡管理員開通:@058gvokk`;
+    else if (text === "我的ID") reply = `你的 LINE User ID：\n${userId}`;
     else if (text === "我的狀態") reply = vip ? `你目前是 VIP 會員 ✅\n到期日：${vipData.expire_date}` : "你目前不是 VIP 會員。\n輸入「加入VIP」查看方案。";
     else if (text === "加入VIP" || text === "VIP") reply = vipInfo();
 
@@ -171,13 +159,6 @@ async function handleEvent(event, client) {
     else if (text === "今日主推") reply = vip ? ai.todayMainPick() : needVip();
     else if (text === "足球串關") reply = vip ? ai.footballParlay() : needVip();
     else if (text === "爆冷預警") reply = vip ? ai.upsetAlert() : needVip();
-
-    else if (text === "世界盃" || text === "世界盃說明") reply = ai.worldCupHelp(vip);
-    else if (text === "今日世界盃") reply = await vipOnly(vip, () => football.todayWorldCup());
-    else if (text === "世界盃賽程") reply = await vipOnly(vip, () => football.worldCupSchedule());
-    else if (text === "世界盃積分榜") reply = await vipOnly(vip, () => football.worldCupStandings());
-    else if (text === "世界盃主推") reply = vip ? ai.worldCupMainPick() : needVip();
-    else if (text === "世界盃串關") reply = vip ? ai.worldCupParlay() : needVip();
 
     else if (isAdmin && text.startsWith("開通VIP")) {
       const parts = text.split(/\s+/);
@@ -200,15 +181,13 @@ async function handleEvent(event, client) {
 
 免費：
 足球分析 皇馬 vs 巴薩
-世界盃 巴西 vs 阿根廷
 加入VIP
 
 VIP：
 今日足球
 即時比分
-今日主推
-足球串關
-爆冷預警`;
+英超積分榜
+今日主推`;
     }
   } catch (err) {
     console.error("Command error:", err);
@@ -218,4 +197,4 @@ VIP：
   return client.replyMessage(event.replyToken, { type: "text", text: reply });
 }
 
-app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Football AI V7 running"));
+app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Football AI V7.1 ZH Teams running"));

@@ -1,7 +1,6 @@
 {
-  "name": "line-football-ai-v7",
-  "version": "7.0.0",
-  "description": "LINE Football AI Predictor V7",
+  "name": "line-football-ai-v7-1-zh-teams",
+  "version": "7.1.1",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

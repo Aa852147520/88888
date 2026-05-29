@@ -76,14 +76,8 @@ function todayMainPick() {
 大小球：
 大 2.5 觀察
 
-雙方進球：
-YES
-
 信心：
-★★★★☆ 78%
-
-風險：
-中低風險`;
+★★★★☆ 78%`;
 }
 
 function footballParlay() {
@@ -96,10 +90,7 @@ function footballParlay() {
 進取 3 關：
 1. 曼城不敗
 2. 皇馬不敗
-3. 拜仁大 2.5
-
-提醒：
-串關高波動，只建議小注。`;
+3. 拜仁大 2.5`;
 }
 
 function upsetAlert() {
@@ -113,60 +104,4 @@ function upsetAlert() {
 5. 賠率突然反向變動`;
 }
 
-function worldCupHelp(vip) {
-  return `【🌎 世界盃專區】
-
-免費：
-世界盃 巴西 vs 阿根廷
-
-VIP：
-今日世界盃
-世界盃賽程
-世界盃積分榜
-世界盃主推
-世界盃串關
-爆冷預警
-
-目前身分：
-${vip ? "VIP 會員 ✅" : "免費會員"}`;
-}
-
-function worldCupMainPick() {
-  return `【VIP 世界盃主推】
-
-場次：
-法國 vs 英格蘭
-
-方向：
-法國不敗
-
-大小球：
-小 2.5 觀察
-
-信心：
-★★★★☆ 76%`;
-}
-
-function worldCupParlay() {
-  return `【VIP 世界盃串關】
-
-保守 2 關：
-1. 法國不敗
-2. 日本 vs 韓國 小 2.5
-
-進取 3 關：
-1. 法國不敗
-2. 日本 vs 韓國 小 2.5
-3. 巴西 vs 阿根廷 雙方進球 YES`;
-}
-
-module.exports = {
-  footballAnalysis,
-  worldCupAnalysis,
-  todayMainPick,
-  footballParlay,
-  upsetAlert,
-  worldCupHelp,
-  worldCupMainPick,
-  worldCupParlay
-};
+module.exports = { footballAnalysis, worldCupAnalysis, todayMainPick, footballParlay, upsetAlert };
