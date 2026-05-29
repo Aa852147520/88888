@@ -55,8 +55,6 @@ async function apiStatus() {
     return `【API-Football 狀態】
 
 狀態：已連線 ✅
-帳號：${account.firstname || ""} ${account.lastname || ""}
-方案：${account.plan || "未知"}
 今日已用：${requests.current || 0}
 今日上限：${requests.limit_day || "未知"}
 
