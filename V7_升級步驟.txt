@@ -1,0 +1,22 @@
+V7 足球專業版升級步驟：
+
+1. 解壓縮 line-football-ai-v7.zip
+2. 到 GitHub 原本專案
+3. 刪除舊檔案
+4. 上傳 V7 全部檔案
+5. Commit changes
+6. 到 Render
+7. 確認 Environment 有：
+   LINE_CHANNEL_ACCESS_TOKEN
+   LINE_CHANNEL_SECRET
+   ADMIN_USER_ID
+   SUPABASE_URL
+   SUPABASE_SERVICE_ROLE_KEY
+   API_FOOTBALL_KEY
+8. Manual Deploy → Deploy latest commit
+9. 等 Render 顯示 Live
+10. LINE 測試：
+   足球分析 皇馬 vs 巴薩
+   今日足球
+   即時比分
+   今日主推
