@@ -110,8 +110,9 @@ async function handleEvent(event, client) {
   let reply = "";
 
   try {
-    if (text === "我的ID") {
-      reply = `你的 LINE User ID：\n${userId}`;
+    if (text === "開通") {
+      reply = `你的開通密鑰：\n${userId}
+      請聯絡管理員開通:@058gvokk`;
     } else if (text === "說明" || text.toLowerCase() === "help") {
       reply = engine.helpText(vip, isAdmin);
 
