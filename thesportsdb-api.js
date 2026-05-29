@@ -46,24 +46,37 @@ async function apiStatus() {
   }
 }
 
-function eventLine(e, idx) {
-  const home = zhTeam(e.strHomeTeam);
-  const away = zhTeam(e.strAwayTeam);
-  const league = zhLeague(e.strLeague);
-  const score = e.intHomeScore !== null && e.intHomeScore !== "" ? `\n⚽ 比分：${e.intHomeScore} : ${e.intAwayScore}` : "";
-  return `${idx + 1}️⃣ ${home} vs ${away}
-🏆 賽事：${league}
-🕒 時間：${twTime(e.dateEvent, e.strTime)}
-📊 狀態：${e.strStatus || "未開賽"}${score}`;
+function todayYMD() {
+  const d = new Date();
+  return d.toISOString().slice(0, 10);
+}
+
+async function safeJson(url) {
+  const res = await fetch(url);
+  const text = await res.text();
+
+  if (!text || !text.trim().startsWith("{")) {
+    throw new Error("TheSportsDB 回傳空白或非JSON資料");
+  }
+
+  return JSON.parse(text);
 }
 
 async function todaySoccer() {
   try {
-    const res = await fetch(`${BASE}/eventsday.php?s=Soccer`);
-    const data = await res.json();
+    const date = todayYMD();
+
+    const data = await safeJson(`${BASE}/eventsday.php?d=${date}&s=Soccer`);
+
     const events = (data.events || []).slice(0, 12);
-    if (!events.length) return "【TheSportsDB 今日足球】暫時沒有抓到足球賽事。";
-    return `⚽【TheSportsDB 今日足球】\n\n${events.map(eventLine).join("\n\n")}`;
+
+    if (!events.length) {
+      return "【TheSportsDB 今日足球】今天暫時沒有抓到足球賽事。";
+    }
+
+    return `⚽【TheSportsDB 今日足球】
+
+${events.map(eventLine).join("\n\n")}`;
   } catch (err) {
     return `TheSportsDB 今日足球抓取失敗：${err.message}`;
   }
