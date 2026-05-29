@@ -3,6 +3,7 @@ const express = require("express");
 const line = require("@line/bot-sdk");
 const { createClient } = require("@supabase/supabase-js");
 const football = require("./football-data-api");
+const tdb = require("./thesportsdb-api");
 const ai = require("./football-ai");
 
 const config = {
@@ -19,17 +20,8 @@ function addDays(days) {
   return d.toISOString().slice(0, 10);
 }
 
-function todayDate() {
-  return new Date().toISOString().slice(0, 10);
-}
-
 async function getVip(userId) {
-  const { data, error } = await supabase
-    .from("vip_users")
-    .select("user_id, expire_date, status")
-    .eq("user_id", userId)
-    .maybeSingle();
-  if (error) return null;
+  const { data } = await supabase.from("vip_users").select("user_id, expire_date, status").eq("user_id", userId).maybeSingle();
   return data;
 }
 
@@ -53,29 +45,12 @@ async function addVip(userId, days = 30) {
 }
 
 async function removeVip(userId) {
-  const { error } = await supabase.from("vip_users")
-    .update({ status: "inactive", updated_at: new Date().toISOString() })
-    .eq("user_id", userId);
+  const { error } = await supabase.from("vip_users").update({ status: "inactive", updated_at: new Date().toISOString() }).eq("user_id", userId);
   if (error) throw error;
 }
 
 async function listVip(limit = 30) {
-  const { data, error } = await supabase.from("vip_users")
-    .select("user_id, expire_date, status, updated_at")
-    .order("updated_at", { ascending: false })
-    .limit(limit);
-  if (error) throw error;
-  return data || [];
-}
-
-async function expiringVip(days = 3) {
-  const end = addDays(days);
-  const { data, error } = await supabase
-    .from("vip_users")
-    .select("user_id, expire_date, status")
-    .eq("status", "active")
-    .lte("expire_date", end)
-    .order("expire_date", { ascending: true });
+  const { data, error } = await supabase.from("vip_users").select("user_id, expire_date, status, updated_at").order("updated_at", { ascending: false }).limit(limit);
   if (error) throw error;
   return data || [];
 }
@@ -83,26 +58,20 @@ async function expiringVip(days = 3) {
 async function countVip() {
   const rows = await listVip(1000);
   const active = rows.filter(r => r.status === "active" && new Date(r.expire_date + "T23:59:59").getTime() >= Date.now()).length;
-  const expired = rows.filter(r => r.status !== "active" || new Date(r.expire_date + "T23:59:59").getTime() < Date.now()).length;
-  return { total: rows.length, active, expired };
+  return { total: rows.length, active, expired: rows.length - active };
 }
 
 function needVip() {
   return `🔒 VIP 專屬功能
 
-你目前是免費會員。
-
 VIP 可使用：
 ✅ 今日足球
 ✅ 即時比分
 ✅ 五大聯賽賽程 / 積分榜
+✅ TheSportsDB 備援賽程
 ✅ 進階分析
-✅ 最近5場
-✅ 對戰紀錄 H2H
-✅ 主客場分析
-✅ 今日主推
-✅ 足球串關
-✅ 爆冷預警
+✅ 最近5場 / H2H / 主客場
+✅ 今日主推 / 足球串關 / 爆冷預警
 
 請聯絡客服開通 VIP。`;
 }
@@ -111,21 +80,18 @@ function vipInfo() {
   return `【⚽ 足球 AI VIP】
 
 VIP 解鎖：
-1. 今日足球賽事
-2. 即時比分
-3. 五大聯賽賽程 / 積分榜
-4. 最近5場戰績
-5. H2H 對戰紀錄
-6. 主客場分析
-7. AI 信心指數
-8. 今日主推 / 足球串關
+1. 今日足球 / 即時比分
+2. 五大聯賽賽程 / 積分榜
+3. TheSportsDB 備援資料
+4. 進階足球 AI 分析
+5. 今日主推 / 串關 / 爆冷預警
 
-請聯絡管理員開通
-： @058gvokk `;
+管理員開通：
+開通VIP USER_ID 30`;
 }
 
 function helpText(vip, isAdmin) {
-  return `【⚽ 足球 AI 智能分析】
+  return `【⚽ 足球 AI V10 雙 API 備援版】
 
 免費可用：
 足球分析 皇馬 vs 巴薩
@@ -136,6 +102,7 @@ function helpText(vip, isAdmin) {
 VIP 專屬：
 今日足球
 即時比分
+備援今日足球
 英超賽程 / 英超積分榜
 西甲賽程 / 西甲積分榜
 義甲賽程 / 義甲積分榜
@@ -152,20 +119,27 @@ VIP 專屬：
 
 目前身分：
 ${vip ? "VIP 會員 ✅" : "免費會員"}
-${isAdmin ? "\n\n管理員：\n我的ID\n開通VIP USER_ID 30\n取消VIP USER_ID\nVIP名單\nVIP統計\n即將到期\nAPI狀態\n公告 文字內容" : ""}`;
+${isAdmin ? "\n\n管理員：我的ID / 開通VIP / 取消VIP / VIP名單 / VIP統計 / API狀態" : ""}`;
 }
 
 function vipOnly(vip, fn) {
   return vip ? fn() : Promise.resolve(needVip());
 }
 
-app.get("/", (req, res) => res.send("LINE Football AI Final V9.1 Live is running. Webhook: /webhook"));
+async function smartTodayFootball() {
+  const main = await football.todayMatches();
+  if (!main.includes("抓取失敗") && !main.includes("暫時沒有抓到")) return main;
+  const backup = await tdb.todaySoccer();
+  return `${main}\n\n---\n備援資料源 TheSportsDB：\n\n${backup}`;
+}
+
+app.get("/", (req, res) => res.send("LINE Football AI V10 Dual API is running. Webhook: /webhook"));
 app.get("/health", (req, res) => res.json({
   ok: true,
-  version: "v9.1-live",
+  version: "v10-dual-api",
   footballData: !!process.env.FOOTBALL_DATA_KEY,
-  supabase: !!process.env.SUPABASE_URL,
-  line: !!process.env.LINE_CHANNEL_ACCESS_TOKEN
+  thesportsdb: true,
+  supabase: !!process.env.SUPABASE_URL
 }));
 
 app.post("/webhook", line.middleware(config), async (req, res) => {
@@ -191,16 +165,17 @@ async function handleEvent(event, client) {
 
   try {
     if (text === "說明" || text.toLowerCase() === "help") reply = helpText(vip, isAdmin);
-    else if (text === "開通") reply = `你的開通密鑰：\n${userId} 
-    請聯絡管理員開通:@058gvokk`;
+    else if (text === "我的ID") reply = `你的 LINE User ID：\n${userId}`;
     else if (text === "我的狀態") reply = vip ? `你目前是 VIP 會員 ✅\n到期日：${vipData.expire_date}` : "你目前不是 VIP 會員。\n輸入「加入VIP」查看方案。";
     else if (text === "加入VIP" || text === "VIP") reply = vipInfo();
 
     else if (text.startsWith("足球分析")) reply = ai.footballAnalysis(text.replace("足球分析", "").trim(), vip);
     else if (text.startsWith("世界盃 ")) reply = ai.worldCupAnalysis(text.replace("世界盃", "").trim(), vip);
 
-    else if (text === "API狀態") reply = isAdmin ? await football.apiStatus() : needVip();
-    else if (text === "今日足球") reply = await vipOnly(vip, () => football.todayMatches());
+    else if (text === "API狀態") reply = isAdmin ? await football.apiStatus() + "\n\n" + await tdb.apiStatus() : needVip();
+
+    else if (text === "今日足球") reply = await vipOnly(vip, () => smartTodayFootball());
+    else if (text === "備援今日足球") reply = await vipOnly(vip, () => tdb.todaySoccer());
     else if (text === "即時比分" || text === "足球比分") reply = await vipOnly(vip, () => football.liveScores());
 
     else if (text === "英超賽程") reply = await vipOnly(vip, () => football.competitionMatches("PL"));
@@ -245,12 +220,6 @@ async function handleEvent(event, client) {
     } else if (isAdmin && text === "VIP統計") {
       const c = await countVip();
       reply = `【VIP 統計】\n總筆數：${c.total}\n有效VIP：${c.active}\n過期/停用：${c.expired}`;
-    } else if (isAdmin && text === "即將到期") {
-      const rows = await expiringVip(3);
-      reply = rows.length ? "【3天內即將到期】\n" + rows.map(r => `${r.user_id}\n到期：${r.expire_date}`).join("\n\n") : "3天內沒有即將到期會員。";
-    } else if (isAdmin && text.startsWith("公告")) {
-      const msg = text.replace("公告", "").trim();
-      reply = msg ? `公告內容已收到：\n${msg}\n\n提醒：若要真正群發，需再啟用 multicast。` : "格式：公告 你要發送的文字";
     } else {
       reply = `收到：「${text}」
 
@@ -261,12 +230,9 @@ async function handleEvent(event, client) {
 VIP：
 今日足球
 即時比分
+備援今日足球
 進階分析 曼城 vs 利物浦
-最近5場 曼城
-對戰紀錄 曼城 vs 利物浦
-主客場 曼城 vs 利物浦
-今日主推
-足球串關`;
+今日主推`;
     }
   } catch (err) {
     console.error("Command error:", err);
@@ -276,4 +242,4 @@ VIP：
   return client.replyMessage(event.replyToken, { type: "text", text: reply });
 }
 
-app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Football AI Final V9.1 Live running"));
+app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Football AI V10 Dual API running"));

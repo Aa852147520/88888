@@ -1,7 +1,7 @@
 {
-  "name": "line-football-ai-final-v9-1-live",
-  "version": "9.1.0",
-  "description": "LINE Football AI Final V9.1 with Football-Data.org live scores, Supabase VIP, Chinese UI",
+  "name": "line-football-ai-v10-dual-api",
+  "version": "10.0.0",
+  "description": "LINE Football AI V10 Dual API: Football-Data.org + TheSportsDB fallback + Supabase VIP",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

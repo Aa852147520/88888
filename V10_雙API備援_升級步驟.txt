@@ -1,0 +1,20 @@
+V10 雙 API 備援版升級步驟：
+
+1. 解壓縮 line-football-ai-v10-dual-api.zip
+2. 到 GitHub 原本專案
+3. 刪除舊檔案
+4. 上傳 V10 全部檔案
+5. Commit changes
+
+6. Render → Environment
+確認有：
+FOOTBALL_DATA_KEY
+THESPORTSDB_KEY=3
+
+7. Render → Manual Deploy → Deploy latest commit
+
+8. LINE 測試：
+API狀態
+今日足球
+備援今日足球
+即時比分

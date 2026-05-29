@@ -1,35 +1,27 @@
-# LINE Football AI 最終版 V9.1 即時比分版
+# LINE Football AI V10 雙 API 備援版
 
-## 新增
-- 即時比分 指令
-- 足球比分 指令
-- 修正即將到期查詢
-- 保留 V9 全部功能
+## 特色
+- Football-Data.org 主資料源
+- TheSportsDB 備援資料源
+- TheSportsDB 免費 Key 預設使用 3
+- Supabase VIP
+- 即時比分
+- 今日足球
+- 中文隊名
+- AI 進階分析
 
-## 免費指令
-足球分析 皇馬 vs 巴薩
-世界盃 巴西 vs 阿根廷
-加入VIP
-我的狀態
+## 新增指令
+備援今日足球
+API狀態 會同時檢查兩個 API
 
-## VIP 指令
-今日足球
-即時比分
-英超賽程
-英超積分榜
-進階分析 曼城 vs 利物浦
-最近5場 曼城
-對戰紀錄 曼城 vs 利物浦
-主客場 曼城 vs 利物浦
-今日主推
-足球串關
-爆冷預警
+## Render Environment
+必填：
+LINE_CHANNEL_ACCESS_TOKEN
+LINE_CHANNEL_SECRET
+ADMIN_USER_ID
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+FOOTBALL_DATA_KEY
 
-## 管理員指令
-API狀態
-我的ID
-開通VIP Uxxxxxxxx 30
-取消VIP Uxxxxxxxx
-VIP名單
-VIP統計
-即將到期
+可選：
+THESPORTSDB_KEY=3
