@@ -125,7 +125,8 @@ async function handleEvent(event, client) {
 
   try {
     if (text === "開通") {
-      reply = `你的開通 ID：\n${userId}\n\n開通請聯絡管理員官方LINE:@058gvokk`;
+      reply = `你的開通 ID：\n${userId}\n\n開通請聯絡管理員
+      官方LINE:@058gvokk`;
     } else if (text === "說明" || text.toLowerCase() === "help") {
       reply = engine.helpText(vip, isAdmin);
     } else if (text === "今日賽事") {
