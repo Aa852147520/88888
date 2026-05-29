@@ -1,7 +1,7 @@
 {
-  "name": "line-sports-predictor-v4-supabase",
-  "version": "4.0.0",
-  "description": "LINE AI Sports Predictor Bot V4 with Supabase persistent VIP",
+  "name": "line-sports-predictor-v6-worldcup",
+  "version": "6.0.0",
+  "description": "LINE AI Sports Predictor Bot V6 World Cup + Live Games + Supabase VIP",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

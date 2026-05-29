@@ -3,6 +3,8 @@ const express = require("express");
 const line = require("@line/bot-sdk");
 const { createClient } = require("@supabase/supabase-js");
 const engine = require("./sports-engine");
+const live = require("./live-games");
+const worldcup = require("./worldcup-engine");
 
 const config = {
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
@@ -10,11 +12,7 @@ const config = {
 };
 
 const ADMIN_USER_ID = process.env.ADMIN_USER_ID || "";
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 const app = express();
 
 function addDays(days) {
@@ -28,11 +26,7 @@ async function getVip(userId) {
     .select("user_id, expire_date, status")
     .eq("user_id", userId)
     .maybeSingle();
-
-  if (error) {
-    console.error("getVip error:", error);
-    return null;
-  }
+  if (error) return null;
   return data;
 }
 
@@ -43,7 +37,7 @@ async function isVip(userId) {
   return new Date(data.expire_date + "T23:59:59").getTime() >= Date.now();
 }
 
-async function addVip(userId, days = 30, note = "manual") {
+async function addVip(userId, days = 30) {
   const expireDate = addDays(days);
   const { error } = await supabase
     .from("vip_users")
@@ -51,10 +45,9 @@ async function addVip(userId, days = 30, note = "manual") {
       user_id: userId,
       expire_date: expireDate,
       status: "active",
-      note,
+      note: "manual",
       updated_at: new Date().toISOString()
     }, { onConflict: "user_id" });
-
   if (error) throw error;
   return expireDate;
 }
@@ -62,42 +55,27 @@ async function addVip(userId, days = 30, note = "manual") {
 async function removeVip(userId) {
   const { error } = await supabase
     .from("vip_users")
-    .update({
-      status: "inactive",
-      updated_at: new Date().toISOString()
-    })
+    .update({ status: "inactive", updated_at: new Date().toISOString() })
     .eq("user_id", userId);
-
   if (error) throw error;
 }
 
 async function listVip() {
   const { data, error } = await supabase
     .from("vip_users")
-    .select("user_id, expire_date, status, note, updated_at")
+    .select("user_id, expire_date, status, updated_at")
     .order("updated_at", { ascending: false })
     .limit(20);
-
   if (error) throw error;
   return data || [];
 }
 
 app.get("/", (req, res) => {
-  res.send("LINE Sports Predictor Bot V4 Supabase is running. Webhook: /webhook");
+  res.send("LINE Sports Predictor Bot V6 World Cup is running. Webhook: /webhook");
 });
 
-app.get("/health", async (req, res) => {
-  try {
-    const { error } = await supabase.from("vip_users").select("user_id").limit(1);
-    res.json({
-      ok: !error,
-      version: "v4-supabase",
-      supabase: error ? error.message : "connected",
-      time: new Date().toISOString()
-    });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
-  }
+app.get("/health", (req, res) => {
+  res.json({ ok: true, version: "v6-worldcup", time: new Date().toISOString() });
 });
 
 app.post("/webhook", line.middleware(config), async (req, res) => {
@@ -120,17 +98,51 @@ async function handleEvent(event, client) {
   const vip = await isVip(userId);
   const vipData = await getVip(userId);
   const isAdmin = ADMIN_USER_ID && userId === ADMIN_USER_ID;
-
   let reply = "";
 
   try {
-    if (text === "開通") {
-      reply = `你的開通 ID：\n${userId}\n\n開通請聯絡管理員
-官方LINE:@058gvokk`;
+    if (text === "我的ID") {
+      reply = `你的 LINE User ID：\n${userId}`;
     } else if (text === "說明" || text.toLowerCase() === "help") {
       reply = engine.helpText(vip, isAdmin);
-    } else if (text === "今日賽事") {
-      reply = engine.todayGames();
+
+    // 世界盃專區
+    } else if (text === "世界盃" || text === "世界盃說明") {
+      reply = worldcup.worldCupHelp(vip);
+    } else if (text === "今日世界盃") {
+      reply = await worldcup.todayWorldCup();
+    } else if (text === "世界盃賽程") {
+      reply = worldcup.worldCupSchedule();
+    } else if (text === "世界盃積分榜") {
+      reply = worldcup.worldCupStandings();
+    } else if (text === "世界盃淘汰賽") {
+      reply = worldcup.worldCupKnockout();
+    } else if (text === "世界盃主推") {
+      reply = vip ? worldcup.worldCupMainPick() : engine.needVip();
+    } else if (text === "世界盃串關") {
+      reply = vip ? worldcup.worldCupParlay() : engine.needVip();
+    } else if (text === "爆冷預警" || text === "世界盃爆冷預警") {
+      reply = vip ? worldcup.worldCupUpsetAlert() : engine.needVip();
+    } else if (text.startsWith("世界盃")) {
+      reply = worldcup.worldCupPrediction(text.replace("世界盃", "").trim(), vip);
+
+    // 即時賽事
+    } else if (text === "今日賽事" || text === "今日即時賽事") {
+      reply = await live.todayAllGames();
+    } else if (text.toUpperCase() === "今日NBA") {
+      reply = await live.todayGamesBySport("NBA");
+    } else if (text.toUpperCase() === "今日MLB") {
+      reply = await live.todayGamesBySport("MLB");
+    } else if (text.toUpperCase() === "今日NFL") {
+      reply = await live.todayGamesBySport("NFL");
+    } else if (text.toUpperCase() === "今日NHL") {
+      reply = await live.todayGamesBySport("NHL");
+    } else if (text === "今日足球") {
+      reply = await live.todayGamesBySport("SOCCER");
+    } else if (text.startsWith("即時分析")) {
+      reply = await live.livePrediction(text.replace("即時分析", "").trim(), vip);
+
+    // VIP 與原有預測
     } else if (text === "每日精選") {
       reply = vip ? engine.vipDailyPicks() : engine.needVip();
     } else if (text.includes("串關")) {
@@ -147,26 +159,19 @@ async function handleEvent(event, client) {
       reply = engine.predictByText(text, vip);
     } else if (text === "VIP" || text === "加入VIP") {
       reply = engine.vipInfo();
-    } else if (text === "VIP查詢") {
-      if (vip) {
-        reply = `你目前是 VIP 會員 ✅\n到期日：${vipData.expire_date}`;
-      } else if (vipData) {
-        reply = `你目前不是 VIP 會員。\n狀態：${vipData.status}\n到期日：${vipData.expire_date}\n輸入「加入VIP」查看方案。`;
-      } else {
-        reply = `你目前不是 VIP 會員。\n輸入「加入VIP」查看方案。`;
-      }
+    } else if (text === "我的狀態") {
+      reply = vip ? `你目前是 VIP 會員 ✅\n到期日：${vipData.expire_date}` : "你目前不是 VIP 會員。輸入「加入VIP」查看方案。";
     } else if (isAdmin && text.startsWith("開通VIP")) {
       const parts = text.split(/\s+/);
       const target = parts[1];
       const days = Number(parts[2] || 30);
-      if (!target) reply = "格式：開通VIP LINE_USER_ID 天數\n例如：開通VIP Uxxxxxxxx 30";
+      if (!target) reply = "格式：開通VIP LINE_USER_ID 天數";
       else {
-        const exp = await addVip(target, days, "manual");
-        reply = `已開通 VIP ✅\nUser ID：${target}\n到期日：${exp}\n`;
+        const exp = await addVip(target, days);
+        reply = `已開通 VIP ✅\nUser ID：${target}\n到期日：${exp}`;
       }
     } else if (isAdmin && text.startsWith("取消VIP")) {
-      const parts = text.split(/\s+/);
-      const target = parts[1];
+      const target = text.split(/\s+/)[1];
       if (!target) reply = "格式：取消VIP LINE_USER_ID";
       else {
         await removeVip(target);
@@ -174,33 +179,30 @@ async function handleEvent(event, client) {
       }
     } else if (isAdmin && text === "VIP名單") {
       const rows = await listVip();
-      if (!rows.length) reply = "目前沒有 VIP 資料。";
-      else reply = "【VIP 名單】\n" + rows.map(r => `${r.status === "active" ? "✅" : "❌"} ${r.user_id}\n到期：${r.expire_date}\n狀態：${r.status}`).join("\n\n");
+      reply = rows.length ? "【VIP 名單】\n" + rows.map(r => `${r.status === "active" ? "✅" : "❌"} ${r.user_id}\n到期：${r.expire_date}`).join("\n\n") : "目前沒有 VIP 資料。";
     } else {
       reply = `收到：「${text}」
 
 可輸入：
-說明
-今日賽事
-預測 湖人 vs 勇士
-NBA 湖人 vs 勇士
-MLB 洋基 vs 道奇
-足球 阿根廷 vs 法國
-大小分 湖人 vs 勇士
-每日精選
-串關
-VIP查詢
-加入VIP`;
+世界盃
+今日世界盃
+世界盃賽程
+世界盃 巴西 vs 阿根廷
+世界盃主推
+世界盃串關
+爆冷預警
+今日即時賽事
+今日NBA
+今日MLB
+即時分析 湖人 vs 勇士`;
     }
   } catch (err) {
     console.error("Command error:", err);
-    reply = `系統錯誤：${err.message}\n請管理員檢查 Supabase 設定或 Render Logs。`;
+    reply = `系統錯誤：${err.message}\n請檢查 Render Logs。`;
   }
 
   return client.replyMessage(event.replyToken, { type: "text", text: reply });
 }
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`✅ LINE Sports Predictor Bot V4 Supabase running on port ${port}`);
-});
+app.listen(port, () => console.log(`✅ LINE Sports Predictor Bot V6 World Cup running on port ${port}`));

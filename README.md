@@ -1,49 +1,55 @@
-# LINE Sports Predictor Bot V4 Supabase 永久 VIP 版
+# LINE Sports Predictor Bot V6 世界盃版
 
-## V4 解決什麼問題？
-Render 免費版會重置檔案，所以 V3 的 `vip-users.json` 可能消失。
-V4 改用 Supabase 資料庫永久保存 VIP 名單。
+## V6 新增
+- 世界盃專區
+- 今日世界盃
+- 世界盃賽程
+- 世界盃積分榜
+- 世界盃淘汰賽
+- 世界盃 AI 分析
+- 世界盃主推 VIP
+- 世界盃串關 VIP
+- 爆冷預警 VIP
+- 保留 V5 即時賽事
+- 保留 Supabase 永久 VIP
 
-## 新增功能
-- Supabase 永久 VIP
-- VIP 到期日永久保存
-- Render 重啟不掉會員
-- 管理員開通 / 取消 VIP
-- VIP 名單查詢
-- `/health` 檢查 Supabase 是否連線成功
-
-## 需要的 Render 環境變數
+## LINE 指令
 ```txt
-LINE_CHANNEL_ACCESS_TOKEN=你的 LINE Token
-LINE_CHANNEL_SECRET=你的 LINE Secret
-ADMIN_USER_ID=你的 LINE User ID
-SUPABASE_URL=你的 Supabase Project URL
-SUPABASE_SERVICE_ROLE_KEY=你的 Supabase service_role key
-```
-
-## Supabase 建表
-到 Supabase → SQL Editor → New query
-貼上 `supabase-schema.sql` 內容，按 Run。
-
-## Webhook
-```txt
-https://你的Render網址.onrender.com/webhook
-```
-
-## 測試指令
-```txt
-說明
+世界盃
+今日世界盃
+世界盃賽程
+世界盃積分榜
+世界盃淘汰賽
+世界盃 巴西 vs 阿根廷
+世界盃主推
+世界盃串關
+爆冷預警
+今日即時賽事
+今日NBA
+今日MLB
 我的狀態
-今日賽事
-每日精選
-串關
-大小分 湖人 vs 勇士
-我的ID
 VIP名單
 開通VIP Uxxxxxxxx 30
-取消VIP Uxxxxxxxx
 ```
 
-## 注意
-`SUPABASE_SERVICE_ROLE_KEY` 很重要，不要公開。
-只能放在 Render Environment Variables。
+## 部署
+1. 解壓縮 ZIP
+2. GitHub 刪掉舊檔案
+3. 上傳 V6 所有檔案
+4. Commit changes
+5. Render → Manual Deploy → Deploy latest commit
+
+## Render 環境變數
+保留原本：
+```txt
+LINE_CHANNEL_ACCESS_TOKEN
+LINE_CHANNEL_SECRET
+ADMIN_USER_ID
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+```
+
+可新增但先不必：
+```txt
+API_FOOTBALL_KEY
+```
