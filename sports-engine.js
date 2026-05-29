@@ -55,7 +55,7 @@ AI 建議：
 }
 
 function helpText(vip, isAdmin) {
-  return `【AI 體育預測 V4 Supabase 指令】
+  return `【體育AI智能分析】
 
 基本：
 今日賽事
