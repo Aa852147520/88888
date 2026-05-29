@@ -86,12 +86,12 @@ VIP 解鎖：
 4. 進階足球 AI 分析
 5. 今日主推 / 串關 / 爆冷預警
 
-管理員開通：
-開通VIP USER_ID 30`;
+請聯絡管理員開通
+: @058gvokk`;
 }
 
 function helpText(vip, isAdmin) {
-  return `【⚽ 足球 AI V10 雙 API 備援版】
+  return `【⚽ 足球 AI 智能分析】
 
 免費可用：
 足球分析 皇馬 vs 巴薩
@@ -165,7 +165,8 @@ async function handleEvent(event, client) {
 
   try {
     if (text === "說明" || text.toLowerCase() === "help") reply = helpText(vip, isAdmin);
-    else if (text === "我的ID") reply = `你的 LINE User ID：\n${userId}`;
+    else if (text === "開通") reply = `你的開通密鑰：\n${userId} 
+    請聯絡管理員開通:@058gvokk`;
     else if (text === "我的狀態") reply = vip ? `你目前是 VIP 會員 ✅\n到期日：${vipData.expire_date}` : "你目前不是 VIP 會員。\n輸入「加入VIP」查看方案。";
     else if (text === "加入VIP" || text === "VIP") reply = vipInfo();
 
