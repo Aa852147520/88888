@@ -166,5 +166,6 @@ ${events.map(eventLine).join("\n\n")}`;
 
 module.exports = {
   apiStatus,
+  todaySoccer: todaySoccerAll,
   todaySoccerAll
 };
