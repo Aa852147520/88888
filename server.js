@@ -124,8 +124,8 @@ async function handleEvent(event, client) {
   let reply = "";
 
   try {
-    if (text === "我的ID") {
-      reply = `你的 LINE User ID：\n${userId}\n\n把這串設成 ADMIN_USER_ID，就能使用管理員指令。`;
+    if (text === "開通") {
+      reply = `你的開通 ID：\n${userId}\n\n開通請聯絡管理員官方LINE:@058gvokk`;
     } else if (text === "說明" || text.toLowerCase() === "help") {
       reply = engine.helpText(vip, isAdmin);
     } else if (text === "今日賽事") {
@@ -161,7 +161,7 @@ async function handleEvent(event, client) {
       if (!target) reply = "格式：開通VIP LINE_USER_ID 天數\n例如：開通VIP Uxxxxxxxx 30";
       else {
         const exp = await addVip(target, days, "manual");
-        reply = `已開通 VIP ✅\nUser ID：${target}\n到期日：${exp}\n資料已存 Supabase，不會因 Render 重啟消失。`;
+        reply = `已開通 VIP ✅\nUser ID：${target}\n到期日：${exp}\n`;
       }
     } else if (isAdmin && text.startsWith("取消VIP")) {
       const parts = text.split(/\s+/);
