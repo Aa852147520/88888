@@ -1,7 +1,7 @@
 {
-  "name": "line-football-ai-v10-1-zh-filter",
-  "version": "10.1.0",
-  "description": "LINE Football AI V10.1 Dual API with TheSportsDB Chinese fallback and league filter",
+  "name": "line-football-ai-v11-live-pro",
+  "version": "11.0.0",
+  "description": "LINE Football AI V11 Pro Live Scores: API-Football primary + Football-Data.org + TheSportsDB fallback",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

@@ -1,0 +1,24 @@
+V11 專業即時比分版升級步驟：
+
+1. 解壓縮 line-football-ai-v11-live-pro.zip
+2. 到 GitHub 原本專案
+3. 刪除舊檔案
+4. 上傳 V11 全部檔案
+5. Commit changes
+
+6. Render → Environment
+確認：
+FOOTBALL_DATA_KEY
+THESPORTSDB_KEY=123
+
+可選新增：
+API_FOOTBALL_KEY=你的 API-Football Key
+
+7. Render → Manual Deploy → Deploy latest commit
+
+8. LINE 測試：
+API狀態
+即時比分
+專業即時比分
+今日足球
+熱門足球

@@ -2,7 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const line = require("@line/bot-sdk");
 const { createClient } = require("@supabase/supabase-js");
-const football = require("./football-data-api");
+
+const apiFootball = require("./api-football-pro");
+const footballData = require("./football-data-api");
 const tdb = require("./thesportsdb-api");
 const ai = require("./football-ai");
 
@@ -21,7 +23,11 @@ function addDays(days) {
 }
 
 async function getVip(userId) {
-  const { data } = await supabase.from("vip_users").select("user_id, expire_date, status").eq("user_id", userId).maybeSingle();
+  const { data } = await supabase
+    .from("vip_users")
+    .select("user_id, expire_date, status")
+    .eq("user_id", userId)
+    .maybeSingle();
   return data;
 }
 
@@ -45,12 +51,17 @@ async function addVip(userId, days = 30) {
 }
 
 async function removeVip(userId) {
-  const { error } = await supabase.from("vip_users").update({ status: "inactive", updated_at: new Date().toISOString() }).eq("user_id", userId);
+  const { error } = await supabase.from("vip_users")
+    .update({ status: "inactive", updated_at: new Date().toISOString() })
+    .eq("user_id", userId);
   if (error) throw error;
 }
 
 async function listVip(limit = 30) {
-  const { data, error } = await supabase.from("vip_users").select("user_id, expire_date, status, updated_at").order("updated_at", { ascending: false }).limit(limit);
+  const { data, error } = await supabase.from("vip_users")
+    .select("user_id, expire_date, status, updated_at")
+    .order("updated_at", { ascending: false })
+    .limit(limit);
   if (error) throw error;
   return data || [];
 }
@@ -65,10 +76,10 @@ function needVip() {
   return `🔒 VIP 專屬功能
 
 VIP 可使用：
+✅ 專業即時比分
+✅ 進球 / 紅牌 / 半場 / 全場狀態
 ✅ 今日足球
-✅ 即時比分
 ✅ 熱門足球
-✅ TheSportsDB 備援熱門賽事
 ✅ 五大聯賽賽程 / 積分榜
 ✅ 進階分析
 ✅ 今日主推 / 足球串關 / 爆冷預警
@@ -80,19 +91,18 @@ function vipInfo() {
   return `【⚽ 足球 AI VIP】
 
 VIP 解鎖：
-1. 今日足球 / 即時比分
-2. 熱門足球賽事
-3. TheSportsDB 備援資料
-4. 五大聯賽賽程 / 積分榜
-5. 進階足球 AI 分析
-6. 今日主推 / 串關 / 爆冷預警
+1. 專業即時比分
+2. 今日足球 / 熱門足球
+3. 五大聯賽賽程 / 積分榜
+4. 進階足球 AI 分析
+5. 今日主推 / 串關 / 爆冷預警
 
-請聯繫管理員開通
-: @058gvokk`;
+管理員開通：
+開通VIP USER_ID 30`;
 }
 
 function helpText(vip, isAdmin) {
-  return `【⚽ 足球 AI 智能分析】
+  return `【⚽ 足球 AI V11 專業即時比分版】
 
 免費可用：
 足球分析 皇馬 vs 巴薩
@@ -101,10 +111,11 @@ function helpText(vip, isAdmin) {
 我的狀態
 
 VIP 專屬：
-今日足球
 即時比分
-備援今日足球
+專業即時比分
+今日足球
 熱門足球
+備援今日足球
 英超賽程 / 英超積分榜
 西甲賽程 / 西甲積分榜
 義甲賽程 / 義甲積分榜
@@ -112,6 +123,9 @@ VIP 專屬：
 法甲賽程 / 法甲積分榜
 歐冠賽程 / 歐冠積分榜
 進階分析 曼城 vs 利物浦
+最近5場 曼城
+對戰紀錄 曼城 vs 利物浦
+主客場 曼城 vs 利物浦
 今日主推
 足球串關
 爆冷預警
@@ -126,16 +140,31 @@ function vipOnly(vip, fn) {
 }
 
 async function smartTodayFootball() {
-  const main = await football.todayMatches();
+  const main = await footballData.todayMatches();
   if (!main.includes("抓取失敗") && !main.includes("暫時沒有抓到")) return main;
   const backup = await tdb.todaySoccer();
   return `${main}\n\n---\n備援資料源 TheSportsDB：\n\n${backup}`;
 }
 
-app.get("/", (req, res) => res.send("LINE Football AI V10.1 ZH Filter is running. Webhook: /webhook"));
+async function smartLiveScores() {
+  const pro = await apiFootball.liveScores();
+  if (!pro.includes("尚未設定") && !pro.includes("失敗") && !pro.includes("停用") && !pro.includes("沒有進行中")) {
+    return pro;
+  }
+
+  const fd = await footballData.liveScores();
+  if (!fd.includes("抓取失敗") && !fd.includes("目前沒有進行中")) {
+    return `【備援 Football-Data.org】\n\n${fd}`;
+  }
+
+  return `${pro}\n\n---\n備援結果：\n${fd}`;
+}
+
+app.get("/", (req, res) => res.send("LINE Football AI V11 Pro Live is running. Webhook: /webhook"));
 app.get("/health", (req, res) => res.json({
   ok: true,
-  version: "v10.1-zh-filter",
+  version: "v11-live-pro",
+  apiFootball: !!process.env.API_FOOTBALL_KEY,
   footballData: !!process.env.FOOTBALL_DATA_KEY,
   thesportsdb: true,
   supabase: !!process.env.SUPABASE_URL
@@ -164,35 +193,41 @@ async function handleEvent(event, client) {
 
   try {
     if (text === "說明" || text.toLowerCase() === "help") reply = helpText(vip, isAdmin);
-    else if (text === "開通") reply = `你的開通密鑰：\n${userId} 
-    請聯絡管理員開通:@058gvokk`;
+    else if (text === "我的ID") reply = `你的 LINE User ID：\n${userId}`;
     else if (text === "我的狀態") reply = vip ? `你目前是 VIP 會員 ✅\n到期日：${vipData.expire_date}` : "你目前不是 VIP 會員。\n輸入「加入VIP」查看方案。";
     else if (text === "加入VIP" || text === "VIP") reply = vipInfo();
 
     else if (text.startsWith("足球分析")) reply = ai.footballAnalysis(text.replace("足球分析", "").trim(), vip);
     else if (text.startsWith("世界盃 ")) reply = ai.worldCupAnalysis(text.replace("世界盃", "").trim(), vip);
 
-    else if (text === "API狀態") reply = isAdmin ? await football.apiStatus() + "\n\n" + await tdb.apiStatus() : needVip();
+    else if (text === "API狀態") {
+      reply = isAdmin
+        ? await apiFootball.apiStatus() + "\n\n" + await footballData.apiStatus() + "\n\n" + await tdb.apiStatus()
+        : needVip();
+    }
+
+    else if (text === "即時比分" || text === "足球比分" || text === "專業即時比分") {
+      reply = await vipOnly(vip, () => smartLiveScores());
+    }
 
     else if (text === "今日足球") reply = await vipOnly(vip, () => smartTodayFootball());
     else if (text === "備援今日足球") reply = await vipOnly(vip, () => tdb.todaySoccer());
     else if (text === "熱門足球") reply = await vipOnly(vip, () => tdb.todaySoccer());
     else if (text === "全部備援足球") reply = await vipOnly(vip, () => tdb.todaySoccerAll());
-    else if (text === "即時比分" || text === "足球比分") reply = await vipOnly(vip, () => football.liveScores());
 
-    else if (text === "英超賽程") reply = await vipOnly(vip, () => football.competitionMatches("PL"));
-    else if (text === "西甲賽程") reply = await vipOnly(vip, () => football.competitionMatches("PD"));
-    else if (text === "義甲賽程") reply = await vipOnly(vip, () => football.competitionMatches("SA"));
-    else if (text === "德甲賽程") reply = await vipOnly(vip, () => football.competitionMatches("BL1"));
-    else if (text === "法甲賽程") reply = await vipOnly(vip, () => football.competitionMatches("FL1"));
-    else if (text === "歐冠賽程") reply = await vipOnly(vip, () => football.competitionMatches("CL"));
+    else if (text === "英超賽程") reply = await vipOnly(vip, () => footballData.competitionMatches("PL"));
+    else if (text === "西甲賽程") reply = await vipOnly(vip, () => footballData.competitionMatches("PD"));
+    else if (text === "義甲賽程") reply = await vipOnly(vip, () => footballData.competitionMatches("SA"));
+    else if (text === "德甲賽程") reply = await vipOnly(vip, () => footballData.competitionMatches("BL1"));
+    else if (text === "法甲賽程") reply = await vipOnly(vip, () => footballData.competitionMatches("FL1"));
+    else if (text === "歐冠賽程") reply = await vipOnly(vip, () => footballData.competitionMatches("CL"));
 
-    else if (text === "英超積分榜") reply = await vipOnly(vip, () => football.standings("PL"));
-    else if (text === "西甲積分榜") reply = await vipOnly(vip, () => football.standings("PD"));
-    else if (text === "義甲積分榜") reply = await vipOnly(vip, () => football.standings("SA"));
-    else if (text === "德甲積分榜") reply = await vipOnly(vip, () => football.standings("BL1"));
-    else if (text === "法甲積分榜") reply = await vipOnly(vip, () => football.standings("FL1"));
-    else if (text === "歐冠積分榜") reply = await vipOnly(vip, () => football.standings("CL"));
+    else if (text === "英超積分榜") reply = await vipOnly(vip, () => footballData.standings("PL"));
+    else if (text === "西甲積分榜") reply = await vipOnly(vip, () => footballData.standings("PD"));
+    else if (text === "義甲積分榜") reply = await vipOnly(vip, () => footballData.standings("SA"));
+    else if (text === "德甲積分榜") reply = await vipOnly(vip, () => footballData.standings("BL1"));
+    else if (text === "法甲積分榜") reply = await vipOnly(vip, () => footballData.standings("FL1"));
+    else if (text === "歐冠積分榜") reply = await vipOnly(vip, () => footballData.standings("CL"));
 
     else if (text.startsWith("進階分析")) reply = vip ? ai.advancedAnalysis(text.replace("進階分析", "").trim()) : needVip();
     else if (text.startsWith("最近5場")) reply = vip ? ai.lastFive(text.replace("最近5場", "").trim()) : needVip();
@@ -230,11 +265,10 @@ async function handleEvent(event, client) {
 加入VIP
 
 VIP：
-今日足球
 即時比分
+專業即時比分
+今日足球
 熱門足球
-備援今日足球
-全部備援足球
 進階分析 曼城 vs 利物浦
 今日主推`;
     }
@@ -246,4 +280,4 @@ VIP：
   return client.replyMessage(event.replyToken, { type: "text", text: reply });
 }
 
-app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Football AI V10.1 ZH Filter running"));
+app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Football AI V11 Pro Live running"));
