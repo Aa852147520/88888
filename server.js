@@ -116,7 +116,8 @@ async function handleEvent(event, client) {
     } else if (text === "API狀態") {
       reply = await footballApi.apiStatus();
     } else if (text === "今日足球") {
-      reply = await footballApi.todayFootball();
+      reply = vip ? await footballApi.todayFootball()
+        : engine.needVip;
     } else if (text === "即時比分" || text === "足球比分") {
       reply = await footballApi.liveScores();
     } else if (text === "英超積分榜") {
