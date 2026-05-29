@@ -126,7 +126,7 @@ async function handleEvent(event, client) {
   try {
     if (text === "開通") {
       reply = `你的開通 ID：\n${userId}\n\n開通請聯絡管理員
- 官方LINE:@058gvokk`;
+官方LINE:@058gvokk`;
     } else if (text === "說明" || text.toLowerCase() === "help") {
       reply = engine.helpText(vip, isAdmin);
     } else if (text === "今日賽事") {
@@ -147,7 +147,7 @@ async function handleEvent(event, client) {
       reply = engine.predictByText(text, vip);
     } else if (text === "VIP" || text === "加入VIP") {
       reply = engine.vipInfo();
-    } else if (text === "我的狀態") {
+    } else if (text === "VIP查詢") {
       if (vip) {
         reply = `你目前是 VIP 會員 ✅\n到期日：${vipData.expire_date}`;
       } else if (vipData) {
@@ -189,7 +189,7 @@ MLB 洋基 vs 道奇
 大小分 湖人 vs 勇士
 每日精選
 串關
-我的狀態
+VIP查詢
 加入VIP`;
     }
   } catch (err) {
