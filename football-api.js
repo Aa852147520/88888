@@ -91,7 +91,7 @@ ${games.map(fixtureLine).join("\n\n")}`;
 
 async function standings(code = "PL") {
   const info = LEAGUES[code] || LEAGUES.PL;
-  const season = new Date().getFullYear();
+  const season = 2024;
   try {
     const data = await apiGet(`/standings?league=${info.id}&season=${season}`);
     const rows = data.response?.[0]?.league?.standings?.[0] || [];
