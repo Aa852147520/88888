@@ -155,6 +155,23 @@ ${games.map(matchLine).join("\n\n")}`;
   }
 }
 
+async function liveScores() {
+  try {
+    const data = await apiGet("/matches");
+    const games = (data.matches || [])
+      .filter(m => m.status === "IN_PLAY" || m.status === "PAUSED")
+      .slice(0, 12);
+
+    if (!games.length) return "⚽【VIP 即時比分】\n\n目前沒有進行中的足球賽事。";
+
+    return `⚽【VIP 即時比分】
+
+${games.map(matchLine).join("\n\n")}`;
+  } catch (err) {
+    return `【即時比分】抓取失敗：${err.message}`;
+  }
+}
+
 async function competitionMatches(code = "PL") {
   const info = COMP[code] || COMP.PL;
   try {
@@ -189,6 +206,7 @@ ${rows.join("\n")}`;
 module.exports = {
   apiStatus,
   todayMatches,
+  liveScores,
   competitionMatches,
   standings
 };
