@@ -24,7 +24,7 @@ function footballAnalysis(matchText, vip = false) {
   const conf = 58 + (h % 25);
   const risk = conf >= 74 ? "中低風險" : conf >= 65 ? "中風險" : "中高風險";
   const pick = home >= away ? "主隊不敗 / 保守方向" : "客隊不敗 / 保守方向";
-  const vipText = vip ? "\nVIP 進階：可搭配即時比分、積分榜、今日主推與串關。" : "\n🔒 免費版只顯示基礎分析；VIP 可看即時比分、今日主推、串關、爆冷預警。";
+  const vipText = vip ? "\nVIP 進階：可搭配賽程、積分榜、今日主推與串關。" : "\n🔒 免費版只顯示基礎分析；VIP 可看今日足球、主推、串關、爆冷預警。";
 
   return `【⚽ 足球 AI 分析】
 
@@ -77,7 +77,10 @@ function todayMainPick() {
 大 2.5 觀察
 
 信心：
-★★★★☆ 78%`;
+★★★★☆ 78%
+
+風險：
+中低風險`;
 }
 
 function footballParlay() {
@@ -90,7 +93,10 @@ function footballParlay() {
 進取 3 關：
 1. 曼城不敗
 2. 皇馬不敗
-3. 拜仁大 2.5`;
+3. 拜仁大 2.5
+
+提醒：
+串關高波動，只建議小注。`;
 }
 
 function upsetAlert() {
@@ -104,4 +110,10 @@ function upsetAlert() {
 5. 賠率突然反向變動`;
 }
 
-module.exports = { footballAnalysis, worldCupAnalysis, todayMainPick, footballParlay, upsetAlert };
+module.exports = {
+  footballAnalysis,
+  worldCupAnalysis,
+  todayMainPick,
+  footballParlay,
+  upsetAlert
+};

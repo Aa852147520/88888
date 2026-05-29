@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const line = require("@line/bot-sdk");
 const { createClient } = require("@supabase/supabase-js");
-const football = require("./football-api");
+const football = require("./football-data-api");
 const ai = require("./football-ai");
 
 const config = {
@@ -45,7 +45,10 @@ async function addVip(userId, days = 30) {
 }
 
 async function removeVip(userId) {
-  const { error } = await supabase.from("vip_users").update({ status: "inactive", updated_at: new Date().toISOString() }).eq("user_id", userId);
+  const { error } = await supabase.from("vip_users").update({
+    status: "inactive",
+    updated_at: new Date().toISOString()
+  }).eq("user_id", userId);
   if (error) throw error;
 }
 
@@ -60,8 +63,14 @@ function needVip() {
 
 VIP 可使用：
 ✅ 今日足球
-✅ 即時比分
-✅ 五大聯賽積分榜
+✅ 英超賽程
+✅ 西甲賽程
+✅ 歐冠賽程
+✅ 英超積分榜
+✅ 西甲積分榜
+✅ 義甲積分榜
+✅ 德甲積分榜
+✅ 法甲積分榜
 ✅ 今日主推
 ✅ 足球串關
 ✅ 爆冷預警
@@ -73,19 +82,20 @@ function vipInfo() {
   return `【足球 AI VIP】
 
 VIP 解鎖：
-1. 今日足球即時賽事
-2. 即時比分
+1. 今日足球賽事
+2. 五大聯賽賽程
 3. 五大聯賽積分榜
 4. 今日主推
 5. 足球串關
 6. 爆冷預警
+7. 進階足球 AI 分析
 
 管理員開通：
 開通VIP USER_ID 30`;
 }
 
 function helpText(vip, isAdmin) {
-  return `【⚽ 足球 AI 預測 V7.1 中文隊名版】
+  return `【⚽ 足球 AI V8 Football-Data.org 版】
 
 免費可用：
 足球分析 皇馬 vs 巴薩
@@ -95,7 +105,12 @@ function helpText(vip, isAdmin) {
 
 VIP 專屬：
 今日足球
-即時比分
+英超賽程
+西甲賽程
+義甲賽程
+德甲賽程
+法甲賽程
+歐冠賽程
 英超積分榜
 西甲積分榜
 義甲積分榜
@@ -114,8 +129,8 @@ function vipOnly(vip, fn) {
   return vip ? fn() : Promise.resolve(needVip());
 }
 
-app.get("/", (req, res) => res.send("LINE Football AI V7.1 ZH Teams is running. Webhook: /webhook"));
-app.get("/health", (req, res) => res.json({ ok: true, version: "v7.1-zh-teams", apiFootball: !!process.env.API_FOOTBALL_KEY }));
+app.get("/", (req, res) => res.send("LINE Football AI V8 Football-Data.org is running. Webhook: /webhook"));
+app.get("/health", (req, res) => res.json({ ok: true, version: "v8-footballdata", footballData: !!process.env.FOOTBALL_DATA_KEY }));
 
 app.post("/webhook", line.middleware(config), async (req, res) => {
   try {
@@ -148,13 +163,20 @@ async function handleEvent(event, client) {
     else if (text.startsWith("世界盃 ")) reply = ai.worldCupAnalysis(text.replace("世界盃", "").trim(), vip);
 
     else if (text === "API狀態") reply = isAdmin ? await football.apiStatus() : needVip();
-    else if (text === "今日足球") reply = await vipOnly(vip, () => football.todayFootball());
-    else if (text === "即時比分" || text === "足球比分") reply = await vipOnly(vip, () => football.liveScores());
+    else if (text === "今日足球") reply = await vipOnly(vip, () => football.todayMatches());
+    else if (text === "英超賽程") reply = await vipOnly(vip, () => football.competitionMatches("PL"));
+    else if (text === "西甲賽程") reply = await vipOnly(vip, () => football.competitionMatches("PD"));
+    else if (text === "義甲賽程") reply = await vipOnly(vip, () => football.competitionMatches("SA"));
+    else if (text === "德甲賽程") reply = await vipOnly(vip, () => football.competitionMatches("BL1"));
+    else if (text === "法甲賽程") reply = await vipOnly(vip, () => football.competitionMatches("FL1"));
+    else if (text === "歐冠賽程") reply = await vipOnly(vip, () => football.competitionMatches("CL"));
+
     else if (text === "英超積分榜") reply = await vipOnly(vip, () => football.standings("PL"));
     else if (text === "西甲積分榜") reply = await vipOnly(vip, () => football.standings("PD"));
     else if (text === "義甲積分榜") reply = await vipOnly(vip, () => football.standings("SA"));
     else if (text === "德甲積分榜") reply = await vipOnly(vip, () => football.standings("BL1"));
     else if (text === "法甲積分榜") reply = await vipOnly(vip, () => football.standings("FL1"));
+    else if (text === "歐冠積分榜") reply = await vipOnly(vip, () => football.standings("CL"));
 
     else if (text === "今日主推") reply = vip ? ai.todayMainPick() : needVip();
     else if (text === "足球串關") reply = vip ? ai.footballParlay() : needVip();
@@ -185,9 +207,10 @@ async function handleEvent(event, client) {
 
 VIP：
 今日足球
-即時比分
+英超賽程
 英超積分榜
-今日主推`;
+今日主推
+足球串關`;
     }
   } catch (err) {
     console.error("Command error:", err);
@@ -197,4 +220,4 @@ VIP：
   return client.replyMessage(event.replyToken, { type: "text", text: reply });
 }
 
-app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Football AI V7.1 ZH Teams running"));
+app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Football AI V8 Football-Data.org running"));

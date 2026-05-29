@@ -1,0 +1,27 @@
+V8 Football-Data.org 升級步驟：
+
+1. 解壓縮 line-football-ai-v8-footballdata.zip
+2. 到 GitHub 原本專案
+3. 刪除舊檔案
+4. 上傳 V8 全部檔案
+5. Commit changes
+
+6. 到 Render → Environment
+新增：
+FOOTBALL_DATA_KEY=你的Football-Data.org金鑰
+
+保留：
+LINE_CHANNEL_ACCESS_TOKEN
+LINE_CHANNEL_SECRET
+ADMIN_USER_ID
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+
+7. Manual Deploy → Deploy latest commit
+
+8. LINE 測試：
+API狀態
+今日足球
+英超賽程
+英超積分榜
+足球分析 皇馬 vs 巴薩
