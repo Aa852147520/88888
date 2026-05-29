@@ -107,7 +107,7 @@ ${top.join("\n")}`;
 
 async function todayWorldCup() {
   try {
-    const data = await apiGet(`/fixtures?league=${LEAGUES.WC.id}&season=2026&date=${today()}`);
+    const data = await apiGet(`/fixtures?league=${LEAGUES.WC.id}&season=2024&date=${today()}`);
     const games = data.response || [];
     if (!games.length) return "【VIP 今日世界盃】目前 API 沒有抓到今日世界盃賽事。";
     return `【VIP 今日世界盃】
