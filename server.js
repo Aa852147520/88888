@@ -70,14 +70,18 @@ async function listVip() {
   return data || [];
 }
 
+function vipOnly(vip, fn) {
+  return vip ? fn() : Promise.resolve(engine.needVip());
+}
+
 app.get("/", (req, res) => {
-  res.send("LINE Sports Predictor Bot V6.1 API-Football is running. Webhook: /webhook");
+  res.send("LINE Sports Predictor Bot V6.2 VIP Locked is running. Webhook: /webhook");
 });
 
 app.get("/health", (req, res) => {
   res.json({
     ok: true,
-    version: "v6.1-api-football",
+    version: "v6.2-vip-locked",
     apiFootball: !!process.env.API_FOOTBALL_KEY,
     time: new Date().toISOString()
   });
@@ -106,40 +110,44 @@ async function handleEvent(event, client) {
   let reply = "";
 
   try {
-    if (text === "開通") {
-      reply = `你的 開通序號：\n${userId} 
-      請聯絡管理員開通:@058gvokk`;
+    if (text === "我的ID") {
+      reply = `你的 LINE User ID：\n${userId}`;
     } else if (text === "說明" || text.toLowerCase() === "help") {
       reply = engine.helpText(vip, isAdmin);
 
-    // API-Football / 足球資料
+    // 管理員與狀態
     } else if (text === "API狀態") {
-      reply = await footballApi.apiStatus();
-    } else if (text === "今日足球") {
-      reply = vip ? await footballApi.todayFootball()
-        : engine.needVip;
-    } else if (text === "即時比分" || text === "足球比分") {
-      reply = await footballApi.liveScores();
-    } else if (text === "英超積分榜") {
-      reply = await footballApi.standings("PL");
-    } else if (text === "西甲積分榜") {
-      reply = await footballApi.standings("PD");
-    } else if (text === "義甲積分榜") {
-      reply = await footballApi.standings("SA");
-    } else if (text === "德甲積分榜") {
-      reply = await footballApi.standings("BL1");
-    } else if (text === "法甲積分榜") {
-      reply = await footballApi.standings("FL1");
+      reply = isAdmin ? await footballApi.apiStatus() : engine.needVip();
+    } else if (text === "我的狀態") {
+      reply = vip ? `你目前是 VIP 會員 ✅\n到期日：${vipData.expire_date}` : "你目前不是 VIP 會員。\n輸入「加入VIP」查看方案。";
+    } else if (text === "VIP" || text === "加入VIP") {
+      reply = engine.vipInfo();
 
-    // 世界盃專區
+    // VIP 鎖定：足球 API
+    } else if (text === "今日足球") {
+      reply = await vipOnly(vip, () => footballApi.todayFootball());
+    } else if (text === "即時比分" || text === "足球比分") {
+      reply = await vipOnly(vip, () => footballApi.liveScores());
+    } else if (text === "英超積分榜") {
+      reply = await vipOnly(vip, () => footballApi.standings("PL"));
+    } else if (text === "西甲積分榜") {
+      reply = await vipOnly(vip, () => footballApi.standings("PD"));
+    } else if (text === "義甲積分榜") {
+      reply = await vipOnly(vip, () => footballApi.standings("SA"));
+    } else if (text === "德甲積分榜") {
+      reply = await vipOnly(vip, () => footballApi.standings("BL1"));
+    } else if (text === "法甲積分榜") {
+      reply = await vipOnly(vip, () => footballApi.standings("FL1"));
+
+    // 世界盃：說明免費，真實賽程/積分榜/VIP內容鎖定
     } else if (text === "世界盃" || text === "世界盃說明") {
       reply = footballApi.worldCupHelp(vip);
     } else if (text === "今日世界盃") {
-      reply = await footballApi.todayWorldCup();
+      reply = await vipOnly(vip, () => footballApi.todayWorldCup());
     } else if (text === "世界盃賽程") {
-      reply = await footballApi.worldCupSchedule();
+      reply = await vipOnly(vip, () => footballApi.worldCupSchedule());
     } else if (text === "世界盃積分榜") {
-      reply = await footballApi.worldCupStandings();
+      reply = await vipOnly(vip, () => footballApi.worldCupStandings());
     } else if (text === "世界盃主推") {
       reply = vip ? footballApi.worldCupMainPick() : engine.needVip();
     } else if (text === "世界盃串關") {
@@ -147,29 +155,32 @@ async function handleEvent(event, client) {
     } else if (text === "爆冷預警" || text === "世界盃爆冷預警") {
       reply = vip ? footballApi.worldCupUpsetAlert() : engine.needVip();
     } else if (text.startsWith("世界盃")) {
+      // 免費保留基本世界盃分析，做引流
       reply = footballApi.worldCupPrediction(text.replace("世界盃", "").trim(), vip);
 
-    // 原本即時賽事
+    // 其他即時賽事：VIP 鎖定
     } else if (text === "今日賽事" || text === "今日即時賽事") {
-      reply = await live.todayAllGames();
+      reply = await vipOnly(vip, () => live.todayAllGames());
     } else if (text.toUpperCase() === "今日NBA") {
-      reply = await live.todayGamesBySport("NBA");
+      reply = await vipOnly(vip, () => live.todayGamesBySport("NBA"));
     } else if (text.toUpperCase() === "今日MLB") {
-      reply = await live.todayGamesBySport("MLB");
+      reply = await vipOnly(vip, () => live.todayGamesBySport("MLB"));
     } else if (text.toUpperCase() === "今日NFL") {
-      reply = await live.todayGamesBySport("NFL");
+      reply = await vipOnly(vip, () => live.todayGamesBySport("NFL"));
     } else if (text.toUpperCase() === "今日NHL") {
-      reply = await live.todayGamesBySport("NHL");
+      reply = await vipOnly(vip, () => live.todayGamesBySport("NHL"));
     } else if (text.startsWith("即時分析")) {
-      reply = await live.livePrediction(text.replace("即時分析", "").trim(), vip);
+      reply = await vipOnly(vip, () => live.livePrediction(text.replace("即時分析", "").trim(), vip));
 
-    // VIP 與原有預測
+    // VIP 鎖定：分析功能
     } else if (text === "每日精選") {
       reply = vip ? engine.vipDailyPicks() : engine.needVip();
     } else if (text.includes("串關")) {
       reply = vip ? engine.vipParlay() : engine.needVip();
     } else if (text.includes("大小分")) {
       reply = vip ? engine.overUnderAnalysis(text) : engine.needVip();
+
+    // 免費保留基礎分析
     } else if (text.toLowerCase().includes("nba")) {
       reply = engine.nbaAnalysis(text, vip);
     } else if (text.toLowerCase().includes("mlb")) {
@@ -178,10 +189,8 @@ async function handleEvent(event, client) {
       reply = engine.footballAnalysis(text, vip);
     } else if (text.startsWith("預測")) {
       reply = engine.predictByText(text, vip);
-    } else if (text === "VIP" || text === "加入VIP") {
-      reply = engine.vipInfo();
-    } else if (text === "我的狀態") {
-      reply = vip ? `你目前是 VIP 會員 ✅\n到期日：${vipData.expire_date}` : "你目前不是 VIP 會員。輸入「加入VIP」查看方案。";
+
+    // 管理員
     } else if (isAdmin && text.startsWith("開通VIP")) {
       const parts = text.split(/\s+/);
       const target = parts[1];
@@ -204,17 +213,24 @@ async function handleEvent(event, client) {
     } else {
       reply = `收到：「${text}」
 
-可輸入：
+免費可用：
+說明
+加入VIP
+我的狀態
+世界盃 巴西 vs 阿根廷
+NBA 湖人 vs 勇士
+MLB 洋基 vs 道奇
+
+VIP 可用：
 今日足球
 即時比分
-英超積分榜
-世界盃
 今日世界盃
 世界盃賽程
-世界盃 巴西 vs 阿根廷
+世界盃積分榜
+每日精選
 世界盃主推
-今日NBA
-今日MLB`;
+世界盃串關
+爆冷預警`;
     }
   } catch (err) {
     console.error("Command error:", err);
@@ -225,4 +241,4 @@ async function handleEvent(event, client) {
 }
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`✅ LINE Sports Predictor Bot V6.1 API-Football running on port ${port}`));
+app.listen(port, () => console.log(`✅ LINE Sports Predictor Bot V6.2 VIP Locked running on port ${port}`));

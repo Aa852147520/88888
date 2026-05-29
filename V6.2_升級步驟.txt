@@ -1,0 +1,37 @@
+V6.2 VIP 限制版升級步驟：
+
+1. 解壓縮 line-sports-predictor-v6-2-vip-locked.zip
+2. 到 GitHub 原本專案
+3. 刪除舊檔案
+4. 上傳 V6.2 全部檔案
+5. Commit changes
+6. 到 Render
+7. 確認 Environment 有：
+   LINE_CHANNEL_ACCESS_TOKEN
+   LINE_CHANNEL_SECRET
+   ADMIN_USER_ID
+   SUPABASE_URL
+   SUPABASE_SERVICE_ROLE_KEY
+   API_FOOTBALL_KEY
+8. Manual Deploy → Deploy latest commit
+9. 等 Render 顯示 Live
+10. LINE 測試：
+
+免費會員測試：
+今日足球
+即時比分
+世界盃賽程
+應該會顯示 VIP 專屬。
+
+免費會員可用：
+世界盃 巴西 vs 阿根廷
+NBA 湖人 vs 勇士
+
+管理員開通：
+開通VIP U會員ID 30
+
+VIP會員測試：
+今日足球
+即時比分
+世界盃賽程
+世界盃主推

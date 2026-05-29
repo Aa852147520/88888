@@ -1,7 +1,7 @@
 {
-  "name": "line-sports-predictor-v6-1-api-football",
-  "version": "6.1.0",
-  "description": "LINE AI Sports Predictor Bot V6.1 API-Football + World Cup + Supabase VIP",
+  "name": "line-sports-predictor-v6-2-vip-locked",
+  "version": "6.2.0",
+  "description": "LINE AI Sports Predictor Bot V6.2 VIP Locked API-Football + Supabase",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

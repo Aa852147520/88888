@@ -1,7 +1,6 @@
 const API_KEY = process.env.API_FOOTBALL_KEY || "";
 const BASE = "https://v3.football.api-sports.io";
 
-// 常用聯賽 ID（API-Football）
 const LEAGUES = {
   PL: { id: 39, name: "英超" },
   PD: { id: 140, name: "西甲" },
@@ -34,9 +33,7 @@ function twTime(dateStr) {
 async function apiGet(path) {
   if (!API_KEY) throw new Error("尚未設定 API_FOOTBALL_KEY");
   const res = await fetch(`${BASE}${path}`, {
-    headers: {
-      "x-apisports-key": API_KEY
-    }
+    headers: { "x-apisports-key": API_KEY }
   });
   const data = await res.json();
   if (!res.ok) throw new Error(`API-Football HTTP ${res.status}`);
@@ -55,10 +52,9 @@ async function apiStatus() {
     return `【API-Football 狀態】
 
 狀態：已連線 ✅
+方案：${account.plan || "未知"}
 今日已用：${requests.current || 0}
-今日上限：${requests.limit_day || "未知"}
-
-如果有顯示已連線，代表 Render API Key 設定成功。`;
+今日上限：${requests.limit_day || "未知"}`;
   } catch (err) {
     return `API-Football 測試失敗：${err.message}`;
   }
@@ -81,7 +77,7 @@ async function todayFootball() {
     const data = await apiGet(`/fixtures?date=${date}`);
     const games = (data.response || []).slice(0, 10);
     if (!games.length) return `【今日足球】\n今天暫時沒有抓到足球賽事。`;
-    return `【今日足球 即時賽事】
+    return `【VIP 今日足球 即時賽事】
 
 ${games.map(fixtureLine).join("\n\n")}
 
@@ -98,8 +94,8 @@ async function liveScores() {
   try {
     const data = await apiGet("/fixtures?live=all");
     const games = (data.response || []).slice(0, 10);
-    if (!games.length) return "【即時比分】目前沒有進行中的足球賽事。";
-    return `【足球即時比分】
+    if (!games.length) return "【VIP 即時比分】目前沒有進行中的足球賽事。";
+    return `【VIP 足球即時比分】
 
 ${games.map(fixtureLine).join("\n\n")}`;
   } catch (err) {
@@ -114,12 +110,8 @@ async function standings(code = "PL") {
     const data = await apiGet(`/standings?league=${info.id}&season=${season}`);
     const standings = data.response?.[0]?.league?.standings?.[0] || [];
     if (!standings.length) return `【${info.name}積分榜】目前沒有資料。`;
-
-    const top = standings.slice(0, 10).map(row => {
-      return `${row.rank}. ${row.team.name}｜${row.points}分｜${row.all.played}場｜勝${row.all.win} 和${row.all.draw} 負${row.all.lose}`;
-    });
-
-    return `【${info.name}積分榜 Top10】
+    const top = standings.slice(0, 10).map(row => `${row.rank}. ${row.team.name}｜${row.points}分｜${row.all.played}場｜勝${row.all.win} 和${row.all.draw} 負${row.all.lose}`);
+    return `【VIP ${info.name}積分榜 Top10】
 
 ${top.join("\n")}`;
   } catch (err) {
@@ -128,26 +120,23 @@ ${top.join("\n")}`;
 }
 
 function worldCupHelp(vip) {
-  return `【世界盃專區 V6.1】
+  return `【世界盃專區 V6.2】
 
-一般指令：
+免費可用：
+世界盃 巴西 vs 阿根廷
+
+VIP 專屬：
 今日世界盃
 世界盃賽程
 世界盃積分榜
-世界盃 巴西 vs 阿根廷
-今日足球
-即時比分
-
-VIP 指令：
 世界盃主推
 世界盃串關
-世界盃爆冷預警
+爆冷預警
 
 目前身分：
 ${vip ? "VIP 會員 ✅" : "免費會員"}
 
-API：
-${API_KEY ? "API-Football 已設定 ✅" : "尚未設定 API_FOOTBALL_KEY"}`;
+${vip ? "你已解鎖世界盃完整功能。" : "輸入「加入VIP」可解鎖完整世界盃資料。"}`
 }
 
 async function todayWorldCup() {
@@ -156,25 +145,16 @@ async function todayWorldCup() {
     const data = await apiGet(`/fixtures?league=${LEAGUES.WC.id}&season=2026&date=${date}`);
     const games = data.response || [];
     if (!games.length) {
-      return `【今日世界盃】
+      return `【VIP 今日世界盃】
 
 目前 API 沒有抓到今日世界盃賽事。
-可能原因：
-1. 今日沒有世界盃比賽
-2. API 免費方案未開放此賽事
-3. 世界盃尚未開打
-
-你仍可輸入：
-世界盃 巴西 vs 阿根廷`;
+可能今日沒有世界盃比賽，或免費 API 方案未開放此賽事。`;
     }
-    return `【今日世界盃】
+    return `【VIP 今日世界盃】
 
 ${games.map(fixtureLine).join("\n\n")}`;
   } catch (err) {
-    return `【今日世界盃】抓取失敗：${err.message}
-
-可先使用：
-世界盃 巴西 vs 阿根廷`;
+    return `【今日世界盃】抓取失敗：${err.message}`;
   }
 }
 
@@ -182,8 +162,8 @@ async function worldCupSchedule() {
   try {
     const data = await apiGet(`/fixtures?league=${LEAGUES.WC.id}&season=2026`);
     const games = (data.response || []).slice(0, 15);
-    if (!games.length) return "【世界盃賽程】目前 API 沒有回傳賽程。";
-    return `【世界盃賽程 前15場】
+    if (!games.length) return "【VIP 世界盃賽程】目前 API 沒有回傳賽程。";
+    return `【VIP 世界盃賽程 前15場】
 
 ${games.map(fixtureLine).join("\n\n")}`;
   } catch (err) {
@@ -195,14 +175,12 @@ async function worldCupStandings() {
   try {
     const data = await apiGet(`/standings?league=${LEAGUES.WC.id}&season=2026`);
     const groups = data.response?.[0]?.league?.standings || [];
-    if (!groups.length) return "【世界盃積分榜】目前 API 沒有回傳積分榜。";
-
+    if (!groups.length) return "【VIP 世界盃積分榜】目前 API 沒有回傳積分榜。";
     const text = groups.slice(0, 8).map((group, idx) => {
       const rows = group.map(row => `${row.rank}. ${row.team.name}｜${row.points}分｜${row.all.played}場`).join("\n");
       return `小組 ${idx + 1}\n${rows}`;
     }).join("\n\n");
-
-    return `【世界盃積分榜】\n\n${text}`;
+    return `【VIP 世界盃積分榜】\n\n${text}`;
   } catch (err) {
     return `【世界盃積分榜】抓取失敗：${err.message}`;
   }
@@ -225,8 +203,9 @@ function worldCupPrediction(matchText, vip) {
   const btts = h % 3 === 0 ? "雙方進球：偏有" : "雙方進球：偏無";
   const pick = teamA >= teamB ? "前方隊伍不敗 / 讓球保守方向" : "後方隊伍不敗 / 讓球保守方向";
   const risk = confidence >= 74 ? "中低風險" : confidence >= 65 ? "中風險" : "中高風險";
+  const vipExtra = vip ? "\nVIP已解鎖：可搭配今日世界盃、世界盃主推、世界盃串關。" : "\n🔒 免費版只顯示基礎分析；VIP 可看即時賽程、積分榜、主推、串關、爆冷預警。";
 
-  return `【世界盃 AI 分析】
+  return `【世界盃 AI 基礎分析】
 
 場次：${matchText}
 
@@ -247,8 +226,7 @@ ${btts}
 
 風險等級：
 ${risk}
-
-${vip ? "VIP 提醒：可搭配世界盃主推與串關，不建議重壓。" : "免費版提醒：VIP 可看世界盃主推、串關、爆冷預警。"}
+${vipExtra}
 
 注意：
 此為機率模型分析，不保證命中。`;

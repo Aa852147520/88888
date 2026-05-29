@@ -20,7 +20,7 @@ function twDate(dateStr) {
 }
 
 async function fetchJson(url) {
-  const res = await fetch(url, { headers: { "user-agent": "line-sports-predictor-v6-1" } });
+  const res = await fetch(url, { headers: { "user-agent": "line-sports-predictor-v6-2" } });
   if (!res.ok) throw new Error(`API ${res.status}`);
   return await res.json();
 }
@@ -43,8 +43,8 @@ function parseEvents(data) {
 async function todayGamesBySport(sportKey) {
   const data = await fetchJson(ESPN[sportKey]);
   const list = parseEvents(data);
-  if (!list.length) return `【今日${SPORT_NAME[sportKey]}】\n目前沒有抓到今日賽事。`;
-  return `【今日${SPORT_NAME[sportKey]} 即時賽事】
+  if (!list.length) return `【VIP 今日${SPORT_NAME[sportKey]}】\n目前沒有抓到今日賽事。`;
+  return `【VIP 今日${SPORT_NAME[sportKey]} 即時賽事】
 
 ${list.join("\n\n")}
 
@@ -64,19 +64,13 @@ async function todayAllGames() {
       chunks.push(`【${SPORT_NAME[key]}】\n暫時抓取失敗`);
     }
   }
-  return `【今日即時賽事總表】
+  return `【VIP 今日即時賽事總表】
 
 ${chunks.join("\n\n")}
 
 足球請輸入：
 今日足球
-即時比分
-
-單項查詢：
-今日NBA
-今日MLB
-今日NFL
-今日NHL`;
+即時比分`;
 }
 
 function quickHash(text) {
@@ -93,7 +87,7 @@ async function livePrediction(matchText, vip) {
   const conf = 58 + (h % 21);
   const side = a >= b ? "前方隊伍方向" : "後方隊伍方向";
   const ou = h % 2 === 0 ? "偏大分" : "偏小分";
-  return `【即時賽事 AI 分析】
+  return `【VIP 即時賽事 AI 分析】
 
 場次：${matchText}
 
@@ -107,8 +101,6 @@ ${side}
 
 大小分：
 ${ou}
-
-${vip ? "VIP提醒：可搭配每日精選與串關，不建議重壓。" : "免費版提醒：VIP 可看每日精選與串關。"}
 
 注意：
 預測為模型估算，不保證命中。`;
