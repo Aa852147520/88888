@@ -203,7 +203,6 @@ async function handleEvent(event, client) {
       reply = `收到：「${text}」
 
 可輸入：
-API狀態
 今日足球
 即時比分
 英超積分榜
