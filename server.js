@@ -1,8 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const line = require("@line/bot-sdk");
-const fs = require("fs");
-const path = require("path");
+const { createClient } = require("@supabase/supabase-js");
 const engine = require("./sports-engine");
 
 const config = {
@@ -11,49 +10,94 @@ const config = {
 };
 
 const ADMIN_USER_ID = process.env.ADMIN_USER_ID || "";
-const VIP_FILE = path.join(__dirname, "vip-users.json");
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 const app = express();
 
-function loadVipUsers() {
-  try {
-    return JSON.parse(fs.readFileSync(VIP_FILE, "utf8"));
-  } catch {
-    return {};
+function addDays(days) {
+  const d = new Date(Date.now() + Number(days || 30) * 24 * 60 * 60 * 1000);
+  return d.toISOString().slice(0, 10);
+}
+
+async function getVip(userId) {
+  const { data, error } = await supabase
+    .from("vip_users")
+    .select("user_id, expire_date, status")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("getVip error:", error);
+    return null;
   }
+  return data;
 }
 
-function saveVipUsers(data) {
-  fs.writeFileSync(VIP_FILE, JSON.stringify(data, null, 2), "utf8");
+async function isVip(userId) {
+  const data = await getVip(userId);
+  if (!data) return false;
+  if (data.status !== "active") return false;
+  return new Date(data.expire_date + "T23:59:59").getTime() >= Date.now();
 }
 
-function isVip(userId) {
-  const vip = loadVipUsers();
-  const exp = vip[userId];
-  if (!exp) return false;
-  return new Date(exp).getTime() >= Date.now();
+async function addVip(userId, days = 30, note = "manual") {
+  const expireDate = addDays(days);
+  const { error } = await supabase
+    .from("vip_users")
+    .upsert({
+      user_id: userId,
+      expire_date: expireDate,
+      status: "active",
+      note,
+      updated_at: new Date().toISOString()
+    }, { onConflict: "user_id" });
+
+  if (error) throw error;
+  return expireDate;
 }
 
-function addVip(userId, days = 30) {
-  const vip = loadVipUsers();
-  const expire = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
-  vip[userId] = expire.toISOString().slice(0, 10);
-  saveVipUsers(vip);
-  return vip[userId];
+async function removeVip(userId) {
+  const { error } = await supabase
+    .from("vip_users")
+    .update({
+      status: "inactive",
+      updated_at: new Date().toISOString()
+    })
+    .eq("user_id", userId);
+
+  if (error) throw error;
 }
 
-function removeVip(userId) {
-  const vip = loadVipUsers();
-  delete vip[userId];
-  saveVipUsers(vip);
+async function listVip() {
+  const { data, error } = await supabase
+    .from("vip_users")
+    .select("user_id, expire_date, status, note, updated_at")
+    .order("updated_at", { ascending: false })
+    .limit(20);
+
+  if (error) throw error;
+  return data || [];
 }
 
 app.get("/", (req, res) => {
-  res.send("LINE Sports Predictor Bot V3 SaaS MVP is running. Webhook: /webhook");
+  res.send("LINE Sports Predictor Bot V4 Supabase is running. Webhook: /webhook");
 });
 
-app.get("/health", (req, res) => {
-  res.json({ ok: true, version: "v3", time: new Date().toISOString() });
+app.get("/health", async (req, res) => {
+  try {
+    const { error } = await supabase.from("vip_users").select("user_id").limit(1);
+    res.json({
+      ok: !error,
+      version: "v4-supabase",
+      supabase: error ? error.message : "connected",
+      time: new Date().toISOString()
+    });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
 });
 
 app.post("/webhook", line.middleware(config), async (req, res) => {
@@ -73,58 +117,66 @@ async function handleEvent(event, client) {
 
   const text = event.message.text.trim();
   const userId = event.source.userId || "";
-  const vip = isVip(userId);
+  const vip = await isVip(userId);
+  const vipData = await getVip(userId);
   const isAdmin = ADMIN_USER_ID && userId === ADMIN_USER_ID;
 
   let reply = "";
 
-  if (text === "開通") {
-    reply = `你的開通序號：\n${userId}\n\n
-請聯絡管理員開通
-管理員官方LINE：@058gvokk`;
-  } else if (text === "說明" || text.toLowerCase() === "help") {
-    reply = engine.helpText(vip, isAdmin);
-  } else if (text === "今日賽事") {
-    reply = engine.todayGames();
-  } else if (text === "每日精選") {
-    reply = vip ? engine.vipDailyPicks() : engine.needVip();
-  } else if (text.includes("串關")) {
-    reply = vip ? engine.vipParlay() : engine.needVip();
-  } else if (text.includes("大小分")) {
-    reply = vip ? engine.overUnderAnalysis(text) : engine.needVip();
-  } else if (text.toLowerCase().includes("nba")) {
-    reply = engine.nbaAnalysis(text, vip);
-  } else if (text.toLowerCase().includes("mlb")) {
-    reply = engine.mlbAnalysis(text, vip);
-  } else if (text.includes("足球") || text.toLowerCase().includes("football") || text.toLowerCase().includes("soccer")) {
-    reply = engine.footballAnalysis(text, vip);
-  } else if (text.startsWith("預測")) {
-    reply = engine.predictByText(text, vip);
-  } else if (text === "VIP" || text === "加入VIP") {
-    reply = engine.vipInfo();
-  } else if (text === "我的狀態") {
-    reply = vip ? `你目前是 VIP 會員 ✅` : `你目前不是 VIP 會員。輸入「加入VIP」查看方案。`;
-  } else if (isAdmin && text.startsWith("開通VIP")) {
-    const parts = text.split(/\s+/);
-    const target = parts[1];
-    const days = Number(parts[2] || 30);
-    if (!target) reply = "格式：開通VIP LINE_USER_ID 天數\n例如：開通VIP Uxxxxxxxx 30天";
-    else {
-      const exp = addVip(target, days);
-      reply = `已開通 VIP ✅\nUser ID：${target}\n到期日：${exp}`;
-    }
-  } else if (isAdmin && text.startsWith("取消VIP")) {
-    const parts = text.split(/\s+/);
-    const target = parts[1];
-    if (!target) reply = "格式：取消VIP LINE_USER_ID";
-    else {
-      removeVip(target);
-      reply = `已取消 VIP：${target}`;
-    }
-  } else if (isAdmin && text === "VIP名單") {
-    reply = "【VIP 名單】\n" + JSON.stringify(loadVipUsers(), null, 2);
-  } else {
-    reply = `收到：「${text}」
+  try {
+    if (text === "我的ID") {
+      reply = `你的 LINE User ID：\n${userId}\n\n把這串設成 ADMIN_USER_ID，就能使用管理員指令。`;
+    } else if (text === "說明" || text.toLowerCase() === "help") {
+      reply = engine.helpText(vip, isAdmin);
+    } else if (text === "今日賽事") {
+      reply = engine.todayGames();
+    } else if (text === "每日精選") {
+      reply = vip ? engine.vipDailyPicks() : engine.needVip();
+    } else if (text.includes("串關")) {
+      reply = vip ? engine.vipParlay() : engine.needVip();
+    } else if (text.includes("大小分")) {
+      reply = vip ? engine.overUnderAnalysis(text) : engine.needVip();
+    } else if (text.toLowerCase().includes("nba")) {
+      reply = engine.nbaAnalysis(text, vip);
+    } else if (text.toLowerCase().includes("mlb")) {
+      reply = engine.mlbAnalysis(text, vip);
+    } else if (text.includes("足球") || text.toLowerCase().includes("football") || text.toLowerCase().includes("soccer")) {
+      reply = engine.footballAnalysis(text, vip);
+    } else if (text.startsWith("預測")) {
+      reply = engine.predictByText(text, vip);
+    } else if (text === "VIP" || text === "加入VIP") {
+      reply = engine.vipInfo();
+    } else if (text === "我的狀態") {
+      if (vip) {
+        reply = `你目前是 VIP 會員 ✅\n到期日：${vipData.expire_date}`;
+      } else if (vipData) {
+        reply = `你目前不是 VIP 會員。\n狀態：${vipData.status}\n到期日：${vipData.expire_date}\n輸入「加入VIP」查看方案。`;
+      } else {
+        reply = `你目前不是 VIP 會員。\n輸入「加入VIP」查看方案。`;
+      }
+    } else if (isAdmin && text.startsWith("開通VIP")) {
+      const parts = text.split(/\s+/);
+      const target = parts[1];
+      const days = Number(parts[2] || 30);
+      if (!target) reply = "格式：開通VIP LINE_USER_ID 天數\n例如：開通VIP Uxxxxxxxx 30";
+      else {
+        const exp = await addVip(target, days, "manual");
+        reply = `已開通 VIP ✅\nUser ID：${target}\n到期日：${exp}\n資料已存 Supabase，不會因 Render 重啟消失。`;
+      }
+    } else if (isAdmin && text.startsWith("取消VIP")) {
+      const parts = text.split(/\s+/);
+      const target = parts[1];
+      if (!target) reply = "格式：取消VIP LINE_USER_ID";
+      else {
+        await removeVip(target);
+        reply = `已取消 VIP：${target}`;
+      }
+    } else if (isAdmin && text === "VIP名單") {
+      const rows = await listVip();
+      if (!rows.length) reply = "目前沒有 VIP 資料。";
+      else reply = "【VIP 名單】\n" + rows.map(r => `${r.status === "active" ? "✅" : "❌"} ${r.user_id}\n到期：${r.expire_date}\n狀態：${r.status}`).join("\n\n");
+    } else {
+      reply = `收到：「${text}」
 
 可輸入：
 說明
@@ -138,6 +190,10 @@ MLB 洋基 vs 道奇
 串關
 我的狀態
 加入VIP`;
+    }
+  } catch (err) {
+    console.error("Command error:", err);
+    reply = `系統錯誤：${err.message}\n請管理員檢查 Supabase 設定或 Render Logs。`;
   }
 
   return client.replyMessage(event.replyToken, { type: "text", text: reply });
@@ -145,5 +201,5 @@ MLB 洋基 vs 道奇
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`✅ LINE Sports Predictor Bot V3 SaaS MVP running on port ${port}`);
+  console.log(`✅ LINE Sports Predictor Bot V4 Supabase running on port ${port}`);
 });

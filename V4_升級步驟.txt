@@ -1,0 +1,63 @@
+V4 Supabase 永久 VIP 版升級步驟：
+
+一、建立 Supabase
+1. 打開 https://supabase.com
+2. Sign in / Sign up
+3. New Project
+4. 設定 Project Name，例如 line-sports-vip
+5. Database Password 自己設定並記下
+6. Region 選離你近的，例如 Singapore / Tokyo
+7. 等建立完成
+
+二、建立 VIP 資料表
+1. Supabase 左邊點 SQL Editor
+2. New query
+3. 打開本 ZIP 內的 supabase-schema.sql
+4. 複製全部 SQL 貼上
+5. 按 Run
+6. 成功後會有 vip_users 資料表
+
+三、取得 Supabase 金鑰
+1. Supabase 左邊 Project Settings
+2. 點 API
+3. 複製 Project URL
+4. 複製 service_role key
+注意：不是 anon key，要用 service_role key
+
+四、更新 GitHub
+1. 解壓縮 V4 ZIP
+2. 到 GitHub 原本專案
+3. 刪掉舊檔案
+4. 上傳 V4 所有檔案
+5. Commit changes
+
+五、Render 新增環境變數
+到 Render → Environment
+新增：
+SUPABASE_URL=你的 Project URL
+SUPABASE_SERVICE_ROLE_KEY=你的 service_role key
+
+保留原本：
+LINE_CHANNEL_ACCESS_TOKEN
+LINE_CHANNEL_SECRET
+ADMIN_USER_ID
+
+六、重新部署
+Render 右上角：
+Manual Deploy → Deploy latest commit
+
+七、測試
+LINE 傳：
+我的狀態
+每日精選
+VIP名單
+
+八、開通 VIP
+管理員輸入：
+開通VIP U會員ID 30
+
+九、確認永久保存
+Render 重新部署後再輸入：
+VIP名單
+
+如果資料還在，代表 V4 成功。

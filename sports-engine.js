@@ -55,7 +55,7 @@ AI 建議：
 }
 
 function helpText(vip, isAdmin) {
-  return `【AI 體育預測 V3 指令】
+  return `【AI 體育預測 V4 Supabase 指令】
 
 基本：
 今日賽事
@@ -177,8 +177,8 @@ function vipInfo() {
 開通方式：
 請聯絡客服人工開通。
 
-管理員官方LINE：
-@058gvokk`;
+管理員可用：
+開通VIP USER_ID 30`;
 }
 
 module.exports = {
