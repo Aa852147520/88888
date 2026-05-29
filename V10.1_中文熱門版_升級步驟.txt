@@ -1,0 +1,19 @@
+V10.1 中文熱門版升級步驟：
+
+1. 解壓縮 line-football-ai-v10-1-zh-filter.zip
+2. 到 GitHub 原本專案
+3. 刪除舊檔案
+4. 上傳 V10.1 全部檔案
+5. Commit changes
+
+6. Render → Environment
+確認：
+THESPORTSDB_KEY=123
+
+7. Render → Manual Deploy → Deploy latest commit
+
+8. LINE 測試：
+API狀態
+熱門足球
+備援今日足球
+全部備援足球

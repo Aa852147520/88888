@@ -1,7 +1,7 @@
 {
-  "name": "line-football-ai-v10-dual-api",
-  "version": "10.0.0",
-  "description": "LINE Football AI V10 Dual API: Football-Data.org + TheSportsDB fallback + Supabase VIP",
+  "name": "line-football-ai-v10-1-zh-filter",
+  "version": "10.1.0",
+  "description": "LINE Football AI V10.1 Dual API with TheSportsDB Chinese fallback and league filter",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
