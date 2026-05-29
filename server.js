@@ -63,14 +63,12 @@ function needVip() {
 
 VIP 可使用：
 ✅ 今日足球
-✅ 英超賽程
-✅ 西甲賽程
+✅ 英超賽程 / 積分榜
+✅ 西甲賽程 / 積分榜
+✅ 義甲賽程 / 積分榜
+✅ 德甲賽程 / 積分榜
+✅ 法甲賽程 / 積分榜
 ✅ 歐冠賽程
-✅ 英超積分榜
-✅ 西甲積分榜
-✅ 義甲積分榜
-✅ 德甲積分榜
-✅ 法甲積分榜
 ✅ 今日主推
 ✅ 足球串關
 ✅ 爆冷預警
@@ -79,7 +77,7 @@ VIP 可使用：
 }
 
 function vipInfo() {
-  return `【足球 AI VIP】
+  return `【⚽ 足球 AI VIP】
 
 VIP 解鎖：
 1. 今日足球賽事
@@ -95,7 +93,7 @@ VIP 解鎖：
 }
 
 function helpText(vip, isAdmin) {
-  return `【⚽ 足球 AI V8 Football-Data.org 版】
+  return `【⚽ 足球 AI V8.1 全中文版】
 
 免費可用：
 足球分析 皇馬 vs 巴薩
@@ -129,8 +127,8 @@ function vipOnly(vip, fn) {
   return vip ? fn() : Promise.resolve(needVip());
 }
 
-app.get("/", (req, res) => res.send("LINE Football AI V8 Football-Data.org is running. Webhook: /webhook"));
-app.get("/health", (req, res) => res.json({ ok: true, version: "v8-footballdata", footballData: !!process.env.FOOTBALL_DATA_KEY }));
+app.get("/", (req, res) => res.send("LINE Football AI V8.1 Full Chinese is running. Webhook: /webhook"));
+app.get("/health", (req, res) => res.json({ ok: true, version: "v8.1-zh-full", footballData: !!process.env.FOOTBALL_DATA_KEY }));
 
 app.post("/webhook", line.middleware(config), async (req, res) => {
   try {
@@ -220,4 +218,4 @@ VIP：
   return client.replyMessage(event.replyToken, { type: "text", text: reply });
 }
 
-app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Football AI V8 Football-Data.org running"));
+app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Football AI V8.1 Full Chinese running"));

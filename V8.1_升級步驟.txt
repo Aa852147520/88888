@@ -1,0 +1,26 @@
+V8.1 全中文足球版升級步驟：
+
+1. 解壓縮 line-football-ai-v8-1-zh-full.zip
+2. 到 GitHub 原本專案
+3. 刪除舊檔案
+4. 上傳 V8.1 全部檔案
+5. Commit changes
+
+6. 到 Render → Environment
+確認有：
+FOOTBALL_DATA_KEY
+LINE_CHANNEL_ACCESS_TOKEN
+LINE_CHANNEL_SECRET
+ADMIN_USER_ID
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+
+7. Manual Deploy → Deploy latest commit
+
+8. LINE 測試：
+今日足球
+英超賽程
+英超積分榜
+足球分析 皇馬 vs 巴薩
+
+如果還有英文球隊名稱，把英文隊名傳給我，我幫你加進翻譯表。
