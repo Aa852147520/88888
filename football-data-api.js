@@ -1,23 +1,99 @@
 const API_KEY = process.env.FOOTBALL_DATA_KEY || "";
 const BASE = "https://api.football-data.org/v4";
 
-const COMP = {
-  PL: { code: "PL", name: "英超" },
-  PD: { code: "PD", name: "西甲" },
-  SA: { code: "SA", name: "義甲" },
-  BL1: { code: "BL1", name: "德甲" },
-  FL1: { code: "FL1", name: "法甲" },
-  CL: { code: "CL", name: "歐冠" }
+const TEAM_ZH = {
+  // 英超
+  "Manchester City FC": "曼城",
+  "Manchester United FC": "曼聯",
+  "Liverpool FC": "利物浦",
+  "Arsenal FC": "兵工廠",
+  "Chelsea FC": "切爾西",
+  "Tottenham Hotspur FC": "熱刺",
+  "Newcastle United FC": "紐卡索",
+  "Aston Villa FC": "阿斯頓維拉",
+
+  // 西甲
+  "Real Madrid CF": "皇家馬德里",
+  "FC Barcelona": "巴塞隆納",
+  "Club Atlético de Madrid": "馬德里競技",
+  "Sevilla FC": "塞維利亞",
+  "Valencia CF": "瓦倫西亞",
+
+  // 義甲
+  "FC Internazionale Milano": "國際米蘭",
+  "Inter Milan": "國際米蘭",
+  "AC Milan": "AC米蘭",
+  "Juventus FC": "尤文圖斯",
+  "SSC Napoli": "拿坡里",
+  "AS Roma": "羅馬",
+  "SS Lazio": "拉齊奧",
+
+  // 德甲
+  "FC Bayern München": "拜仁慕尼黑",
+  "Borussia Dortmund": "多特蒙德",
+  "RB Leipzig": "萊比錫紅牛",
+  "Bayer 04 Leverkusen": "勒沃庫森",
+
+  // 法甲
+  "Paris Saint-Germain FC": "巴黎聖日耳曼",
+  "Olympique de Marseille": "馬賽",
+  "Olympique Lyonnais": "里昂",
+  "AS Monaco FC": "摩納哥",
+
+  // 世界盃常見
+  "Brazil": "巴西",
+  "Argentina": "阿根廷",
+  "France": "法國",
+  "Germany": "德國",
+  "Spain": "西班牙",
+  "England": "英格蘭",
+  "Portugal": "葡萄牙",
+  "Netherlands": "荷蘭",
+
+  // 南美自由盃
+  "CA Boca Juniors": "博卡青年",
+  "Boca Juniors": "博卡青年",
+
+  "CD Universidad Católica": "天主教大學",
+  "Universidad Católica": "天主教大學",
+
+  "Cruzeiro EC": "克魯塞羅",
+  "Cruzeiro": "克魯塞羅",
+
+  "Barcelona SC": "巴塞隆納SC",
+
+  "River Plate": "河床",
+  "Flamengo": "佛朗明哥",
+  "Palmeiras": "帕爾梅拉斯"
 };
 
-const TEAM_ZH = {
-  "Manchester City FC": "曼城", "Manchester United FC": "曼聯", "Liverpool FC": "利物浦",
-  "Arsenal FC": "兵工廠", "Chelsea FC": "切爾西", "Tottenham Hotspur FC": "熱刺",
-  "Real Madrid CF": "皇家馬德里", "FC Barcelona": "巴塞隆納",
-  "FC Bayern München": "拜仁慕尼黑", "Borussia Dortmund": "多特蒙德",
-  "Paris Saint-Germain FC": "巴黎聖日耳曼", "Juventus FC": "尤文圖斯",
-  "AC Milan": "AC米蘭", "FC Internazionale Milano": "國際米蘭"
+const COMP_ZH = {
+  "Premier League": "🇬🇧 英超",
+  "Primera Division": "🇪🇸 西甲",
+  "La Liga": "🇪🇸 西甲",
+  "Serie A": "🇮🇹 義甲",
+  "Bundesliga": "🇩🇪 德甲",
+  "Ligue 1": "🇫🇷 法甲",
+
+  "UEFA Champions League": "🏆 歐洲冠軍聯賽",
+  "UEFA Europa League": "🏆 歐霸聯賽",
+
+  "FIFA World Cup": "🌎 世界盃",
+
+  "Copa Libertadores": "🏆 南美自由盃",
+  "Copa Sudamericana": "🏆 南美俱樂部盃",
+
+  "Campeonato Brasileiro Série A": "🇧🇷 巴西甲級聯賽",
+  "Argentina Primera Division": "🇦🇷 阿根廷甲級聯賽"
 };
+
+function teamZh(name) {
+  return TEAM_ZH[name] || name;
+}
+
+function competitionZh(name) {
+  return COMP_ZH[name] || name;
+}
 
 function teamZh(name) { return TEAM_ZH[name] || name; }
 
@@ -65,7 +141,7 @@ async function apiStatus() {
 function matchLine(m, idx) {
   const home = teamZh(m.homeTeam?.name || "主隊");
   const away = teamZh(m.awayTeam?.name || "客隊");
-  const comp = m.competition?.name || "足球賽事";
+  const comp = competitionZh(m.competition?.name) || "足球賽事";
   const score = m.score?.fullTime?.home !== null && m.score?.fullTime?.home !== undefined
     ? `\n⚽ 比分：${m.score.fullTime.home} : ${m.score.fullTime.away}`
     : "";
