@@ -87,12 +87,12 @@ VIP 解鎖：
 7. 世界盃專區
 8. 進階足球 AI 分析
 
-管理員開通：
-開通VIP USER_ID 30`;
+開通管理員LINE：
+@058gvokk`;
 }
 
 function helpText(vip, isAdmin) {
-  return `【⚽ 足球 AI 預測 V7】
+  return `【⚽ 足球 AI 預測 】
 
 免費可用：
 足球分析 皇馬 vs 巴薩
