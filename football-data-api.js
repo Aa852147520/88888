@@ -215,4 +215,4 @@ ${rows.join("\n")}`;
   }
 }
 
-module.exports = { apiStatus, todayMatches, liveScores, competitionMatches, standings };
+module.exports = { apiStatus, todayMatches, liveScores, competitionMatches, standings, apiGet, teamZh };
