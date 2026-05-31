@@ -184,6 +184,20 @@ async function handleEvent(event, client) {
   if (event.type !== "message" || event.message.type !== "text") return;
 
   const text = event.message.text.trim();
+  if (text === "體育") {
+  return client.replyMessage(event.replyToken, {
+    type: "text",
+    text: "🏆 AI知能分析\n\n請選擇項目：",
+    quickReply: {
+      items: [
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "⚽ 世足",
+            text: "世足"
+          }
+}
   const userId = event.source.userId || "";
 
   // 極速回覆區：不查 Supabase、不查 API
