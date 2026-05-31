@@ -390,7 +390,13 @@ const LEAGUE_ZH = {
   
 };
 
-function zhTeam(name) { return TEAM_ZH[name] || name || "未定"; }
+function zhTeam(name) {
+  const result = TEAM_ZH[name] || name || "未定";
+
+  console.log("TEAM MAP:", name, "=>", result);
+
+  return result;
+}
 function zhLeague(name, country) {
   const key = `${country} ${name}`;
   return LEAGUE_ZH[key] || LEAGUE_ZH[name] || name;
