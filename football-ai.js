@@ -177,6 +177,34 @@ ${f.teams.home.name} 不敗
     return `🎯【VIP 今日主推】抓取失敗：${err.message}`;
   }
 }
-function footballParlay() { return "【VIP 足球串關】\n\n1. 曼城不敗\n2. 皇馬不敗\n3. 拜仁大 2.5"; }
+async function footballParlay() {
+  try {
+    const data = await apiGet(`/fixtures?date=${new Date().toISOString().slice(0,10)}`);
+    const games = data.response || [];
+
+    if (games.length < 3) {
+      return "💰【VIP 足球串關】\n\n今日可用賽事不足。";
+    }
+
+    const picks = games.slice(0, 3);
+
+    return `💰【VIP 足球串關】
+
+1️⃣ ${picks[0].teams.home.name} 不敗
+🏆 ${picks[0].league.name}
+
+2️⃣ ${picks[1].teams.home.name} 不敗
+🏆 ${picks[1].league.name}
+
+3️⃣ ${picks[2].teams.home.name} 大 2.5
+🏆 ${picks[2].league.name}
+
+━━━━━━━━━━━━
+🔥 建議玩法：3串1
+⭐ 信心指數：★★★★☆`;
+  } catch (err) {
+    return `💰【VIP 足球串關】抓取失敗：${err.message}`;
+  }
+}
 function upsetAlert() { return "【VIP 爆冷預警】\n\n熱門強隊讓太深、客場過熱、主力輪休都要注意。"; }
 module.exports = { footballAnalysis, advancedAnalysis, lastFive, h2hAnalysis, homeAwayAnalysis, worldCupAnalysis, todayMainPick, footballParlay, upsetAlert };
