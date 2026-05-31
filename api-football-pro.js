@@ -171,8 +171,11 @@ const TEAM_ZH = {
 const LEAGUE_ZH = {
   "Premier League": "🇬🇧 英超",
   "La Liga": "🇪🇸 西甲",
+  
   "Italy Serie A": "🇮🇹 義甲",
   "Brazil Serie A": "🇧🇷 巴西甲級聯賽",
+  "Brazil Serie B": "🇧🇷 巴西乙級聯賽",
+  
   "Bundesliga": "🇩🇪 德甲",
   "Ligue 1": "🇫🇷 法甲",
 
