@@ -133,6 +133,14 @@ const TEAM_ZH = {
 "Barcelona EC": "巴塞隆納EC",
 "BOA": "博阿",
 "Guarani MG": "瓜拉尼MG",
+"Flamengo": "佛朗明哥",
+"Botafogo": "博塔弗戈",
+"Santos": "桑托斯",
+"Corinthians": "哥林多人",
+"Bahia": "巴伊亞",
+"Fortaleza EC": "福塔雷薩",
+"Ceara": "塞阿拉",
+"Gremio": "格雷米奧",  
 // 巴西
 "RB Bragantino": "RB布拉干蒂諾",
 "SC Internacional": "國際體育會",
@@ -160,10 +168,6 @@ const TEAM_ZH = {
 "Alhama W": "阿爾哈馬女足",
 "Levante W": "萊萬特女足",
 "FC Levante Badalona": "萊萬特巴達洛納女足",
-
-// 巴西
-"RB Bragantino": "RB布拉干蒂諾",
-"Internacional": "國際體育會",
 
 // 挪威
 "Arendal": "阿倫達爾",
