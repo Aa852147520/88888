@@ -83,6 +83,24 @@ const TEAM_ZH = {
 "Slovácko II": "斯洛瓦茨科B隊",
 "Znojmo": "茲諾伊莫",
 "Sparta Brno": "布爾諾斯巴達",
+
+// 越南
+"Ha Noi": "河內FC",
+"Ho Chi Minh": "胡志明市FC",
+"Viettel": "越電信FC",
+"Da Nang": "峴港FC",
+"Nam Dinh": "南定FC",
+
+// 瑞典
+"IF Brommapojkarna": "布羅馬波卡納",
+"Hammarby FF": "哈馬比",
+"IFK Goteborg": "哥德堡",
+"BK Hacken": "赫根",
+
+// 肯亞
+"GOR Mahia": "高爾馬希亞",
+"AFC Leopards": "AFC獵豹",
+"Tusker": "塔斯克",  
 };
 
 const LEAGUE_ZH = {
@@ -157,6 +175,29 @@ const LEAGUE_ZH = {
 "4. liga - Divizie B": "🇨🇿 捷克丁級聯賽 B組",
 "4. liga - Divizie C": "🇨🇿 捷克丁級聯賽 C組",
 "4. liga - Divizie D": "🇨🇿 捷克丁級聯賽 D組",
+
+// 女子聯賽
+"Primera División Femenina": "🇪🇸 西班牙女子甲級聯賽",
+"Damallsvenskan": "🇸🇪 瑞典女子超級聯賽",
+
+// 挪威
+"2. Division - Group 1": "🇳🇴 挪威乙級聯賽 第1組",
+"2. Division - Group 2": "🇳🇴 挪威乙級聯賽 第2組",
+
+// 瑞典
+"Division 2 - Norra Götaland": "🇸🇪 瑞典乙級聯賽 北約塔蘭組",
+"Division 2 - Norra Svealand": "🇸🇪 瑞典乙級聯賽 北斯韋阿蘭組",
+"Division 2 - Södra Svealand": "🇸🇪 瑞典乙級聯賽 南斯韋阿蘭組",
+"Division 2 - Västra Götaland": "🇸🇪 瑞典乙級聯賽 西約塔蘭組",
+
+// 越南
+"V.League 1": "🇻🇳 越南甲級聯賽",
+
+// 肯亞
+"FKF Premier League": "🇰🇪 肯亞超級聯賽",
+
+// 挪威
+"3. Division - Girone 4": "🇳🇴 挪威丙級聯賽 第4組",  
 };
 
 function zhTeam(name) { return TEAM_ZH[name] || name || "未定"; }
