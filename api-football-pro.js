@@ -347,7 +347,10 @@ function fixtureLine(f, idx) {
   
   const home = zhTeam(f.teams.home.name);
   const away = zhTeam(f.teams.away.name);
-  const league = zhLeague(f.league.name);
+  const league = zhLeague(
+  f.league.name,
+  f.league.country
+);
   const status = statusZh(f.fixture.status.short);
   const elapsed = f.fixture.status.elapsed ? `｜${f.fixture.status.elapsed}'` : "";
   const goals = f.goals.home !== null || f.goals.away !== null
