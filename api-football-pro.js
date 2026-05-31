@@ -133,6 +133,20 @@ const TEAM_ZH = {
 "Barcelona EC": "巴塞隆納EC",
 "BOA": "博阿",
 "Guarani MG": "瓜拉尼MG",
+// 巴西
+"RB Bragantino": "RB布拉干蒂諾",
+"SC Internacional": "國際體育會",
+
+"CR Vasco da Gama": "瓦斯科達伽馬",
+"CA Mineiro": "米內羅競技",
+
+"SE Palmeiras": "帕爾梅拉斯",
+"Chapecoense AF": "沙佩科恩斯",
+
+"Clube do Remo": "雷莫俱樂部",
+"São Paulo FC": "聖保羅",
+
+"Fluminense FC": "富明尼斯",  
 
 // 葡萄牙
 "Oliveira Hospital": "奧利維拉醫院",
