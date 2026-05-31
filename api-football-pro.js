@@ -238,6 +238,7 @@ const TEAM_ZH = {
 
 "Fenix": "費尼克斯",
 "Rentistas": "倫蒂斯塔斯",
+};  
 
 const LEAGUE_ZH = {
   "Premier League": "🇬🇧 英超",
