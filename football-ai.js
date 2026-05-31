@@ -1,4 +1,4 @@
-const { apiGet } = require("./api-football-pro");
+const football = require("./api-football-pro");
 
 function hashScore(text) {
   let sum = 0;
