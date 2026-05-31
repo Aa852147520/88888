@@ -188,7 +188,9 @@ const TEAM_ZH = {
 "Espanyol W": "西班牙人女足",
 "Sevilla W": "塞維利亞女足",
 "Madrid CFF W": "馬德里CFF女足",
-"Barcelona W": "巴塞隆納女足",  
+"Barcelona W": "巴塞隆納女足",
+"Oakland Roots": "奧克蘭根隊",
+"Colorado Springs": "科羅拉多泉開關",  
 };
 
 const LEAGUE_ZH = {
@@ -311,7 +313,8 @@ const LEAGUE_ZH = {
 // 葡萄牙
 "Campeonato de Portugal Prio - Promotion Round": "🇵🇹 葡萄牙錦標聯賽升級附加賽",
 
-"Queensland NPL": "🇦🇺 澳洲昆士蘭超級聯賽",  
+"Queensland NPL": "🇦🇺 澳洲昆士蘭超級聯賽",
+"USL Championship": "🇺🇸 美國足球冠軍聯賽",  
   
 };
 
