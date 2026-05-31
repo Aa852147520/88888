@@ -534,7 +534,7 @@ else if (text === "世界盃選單") {
     }
 
     else if (text === "今日主推") {
-      reply = vip ? ai.todayMainPick() : needVip();
+      reply = vip ? await ai.todayMainPick() : needVip();
     }
 
     else if (text === "足球串關") {
