@@ -249,10 +249,10 @@ const userId = event.source.userId || "";
       type: "text",
       text: `⚽ 世足 AI
 
-      請選擇聯賽：
-      🌎 世界盃
-      🏆 歐冠
-      🏴 英超`,
+ 請選擇聯賽：
+ 🌎 世界盃
+ 🏆 歐冠
+ 🏴 英超`,
       quickReply: {
         items: [
           {
@@ -290,9 +290,9 @@ else if (text === "英超選單") {
     text: `🏴 英超 AI
 
  請選擇聯賽：
-      📅 今日賽程
-      📊 積分榜
-      🤖 AI分析`,
+ 📅 今日賽程
+ 📊 積分榜
+ 🤖 AI分析`,
     quickReply: {
       items: [
         {
@@ -323,7 +323,42 @@ else if (text === "英超選單") {
     }
   });
 }
-    
+
+else if (text === "世界盃選單") {
+    return client.replyMessage(event.replyToken, {
+      type: "text",
+      text: `🌎 世界盃 AI
+
+請選擇功能：
+📅 今日賽事
+🤖 AI分析`,
+      quickReply: {
+        items: [
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "📅 今日賽事",
+              text: "世界盃今日賽事"
+            }
+          },
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "🤖 AI分析",
+              text: "世界盃 巴西 vs 阿根廷"
+            }
+          }
+        ]
+      }
+    });
+  }
+
+  else if (text === "世界盃今日賽事") {
+  reply = await vipOnly(vip, () => smartTodayFootball());
+}
+  
   else if (text.startsWith("足球分析")) {
     reply = ai.footballAnalysis(text.replace("足球分析", "").trim(), vip);
   }
