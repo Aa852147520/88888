@@ -1,6 +1,15 @@
 const API_KEY = process.env.FOOTBALL_DATA_KEY || "";
 const BASE = "https://api.football-data.org/v4";
 
+const COMP = {
+  PL: { code: "PL", name: "英超" },
+  PD: { code: "PD", name: "西甲" },
+  SA: { code: "SA", name: "義甲" },
+  BL1: { code: "BL1", name: "德甲" },
+  FL1: { code: "FL1", name: "法甲" },
+  CL: { code: "CL", name: "歐洲冠軍聯賽" }
+};
+
 const TEAM_ZH = {
   // 英超
   "Manchester City FC": "曼城",
