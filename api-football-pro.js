@@ -443,5 +443,7 @@ ${games.map(fixtureLine).join("\n\n")}
 module.exports = {
   apiGet,
   apiStatus,
-  liveScores
+  liveScores,
+  zhTeam,
+  zhLeague
 };
