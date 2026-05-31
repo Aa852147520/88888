@@ -308,7 +308,7 @@ async function handleEvent(event, client) {
     }
 
     else if (text.startsWith("最近5場")) {
-      reply = vip ? ai.lastFive(text.replace("最近5場", "").trim()) : needVip();
+      reply = vip ? await ai.lastFive(text.replace("最近5場", "").trim()) : needVip();
     }
 
     else if (text.startsWith("對戰紀錄")) {
