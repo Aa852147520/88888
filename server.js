@@ -226,11 +226,73 @@ const userId = event.source.userId || "";
 
   // 極速回覆區：不查 Supabase、不查 API
   if (text === "說明" || text.toLowerCase() === "help") {
-    return client.replyMessage(event.replyToken, {
-      type: "text",
-      text: helpText(false, false)
-    });
-  }
+  return client.replyMessage(event.replyToken, {
+    type: "text",
+    text: `📖 功能說明
+
+請選擇功能：`,
+    quickReply: {
+      items: [
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "⚡ 即時比分",
+            text: "即時比分"
+          }
+        },
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "🏆 專業即時比分",
+            text: "專業即時比分"
+          }
+        },
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "⚽ 今日足球",
+            text: "今日足球"
+          }
+        },
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "🔥 熱門足球",
+            text: "熱門足球"
+          }
+        },
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "🔄 備援今日足球",
+            text: "備援今日足球"
+          }
+        },
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "🎯 今日主推",
+            text: "今日主推"
+          }
+        },
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "💰 足球串關",
+            text: "足球串關"
+          }
+        }
+      ]
+    }
+  });
+}
 
   if (text === "加入VIP" || text === "VIP") {
     return client.replyMessage(event.replyToken, {
