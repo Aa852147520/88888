@@ -538,7 +538,7 @@ else if (text === "世界盃選單") {
     }
 
     else if (text === "足球串關") {
-      reply = vip ? ai.footballParlay() : needVip();
+      reply = vip ? await ai.footballParlay() : needVip();
     }
 
     else if (text === "爆冷預警") {
