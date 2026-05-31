@@ -64,6 +64,35 @@ const LEAGUE_ZH = {
   "Bundesliga": "🇩🇪 德甲",
   "Ligue 1": "🇫🇷 法甲",
 
+  "Championship": "🏴 英冠",
+  "League One": "🏴 英甲",
+  "League Two": "🏴 英乙",
+
+  "Eredivisie": "🇳🇱 荷甲",
+  "Primeira Liga": "🇵🇹 葡超",
+  "Super Lig": "🇹🇷 土超",
+  "Belgian Pro League": "🇧🇪 比甲",
+  "Swiss Super League": "🇨🇭 瑞士超",
+
+  "A-League": "🇦🇺 澳洲甲",
+  "A-League Men": "🇦🇺 澳洲甲",
+
+  "K League 1": "🇰🇷 韓國K1聯賽",
+  "K League 2": "🇰🇷 韓國K2聯賽",
+
+  "Chinese Super League": "🇨🇳 中超",
+  "Thai League 1": "🇹🇭 泰超",
+
+  "MLS": "🇺🇸 美國職業足球大聯盟",
+  "Liga MX": "🇲🇽 墨西哥超級聯賽",
+  "Saudi Pro League": "🇸🇦 沙烏地職業聯賽",
+
+  "Veikkausliiga": "🇫🇮 芬超",
+  "Eliteserien": "🇳🇴 挪超",
+  "Allsvenskan": "🇸🇪 瑞典超",
+  "Superettan": "🇸🇪 瑞典甲",
+  "1. Division": "🇳🇴 挪甲",
+
   "UEFA Champions League": "🏆 歐洲冠軍聯賽",
   "UEFA Europa League": "🏆 歐霸聯賽",
 
@@ -145,13 +174,13 @@ function fixtureLine(f, idx) {
   const status = statusZh(f.fixture.status.short);
   const elapsed = f.fixture.status.elapsed ? `｜${f.fixture.status.elapsed}'` : "";
   const goals = f.goals.home !== null || f.goals.away !== null
-    ? `\n⚽ 比分：${f.goals.home ?? 0} : ${f.goals.away ?? 0}`
+    ? `\n⚽ 即時比分：${f.goals.home ?? 0} : ${f.goals.away ?? 0}`
     : "";
 
   return `${idx + 1}️⃣ ${home} vs ${away}
-🏆 賽事：${league}
-🕒 時間：${twTime(f.fixture.date)}
-📊 狀態：${status}${elapsed}${goals}`;
+🏆 聯賽：${league}
+🕒 開賽時間：${twTime(f.fixture.date)}
+📊 比賽狀態：${status}${elapsed}${goals}`;
 }
 
 async function apiStatus() {
@@ -181,11 +210,14 @@ async function liveScores() {
       return "【API-Football 即時比分】目前沒有進行中的足球賽事。";
     }
 
-    return `⚡【VIP 專業即時比分】
+return `⚡【VIP 專業即時比分】
+
+目前進行中的足球賽事：
 
 ${games.map(fixtureLine).join("\n\n")}
 
-資料源：API-Football`;
+━━━━━━━━━━━━
+資料來源：API-Football`;
   } catch (err) {
     return `【API-Football 即時比分】抓取失敗：${err.message}`;
   }
