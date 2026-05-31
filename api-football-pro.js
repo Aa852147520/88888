@@ -30,6 +30,8 @@ const TEAM_ZH = {
   "Napoli": "拿坡里",
   "Roma": "羅馬",
   "Lazio": "拉齊奧",
+  "Fenix": "費尼克斯",
+  "Rentistas": "倫蒂斯塔斯",
 
   // 南美
   "Boca Juniors": "博卡青年",
