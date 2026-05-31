@@ -153,7 +153,8 @@ const TEAM_ZH = {
 
 "Clube do Remo": "雷莫俱樂部",
 "São Paulo FC": "聖保羅",
-
+  
+"Cruzeiro": "克魯塞羅",
 "Fluminense FC": "富明尼斯",  
 
 // 葡萄牙
@@ -425,6 +426,28 @@ async function apiStatus() {
   }
 }
 
+async function todayFootball() {
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+
+    const data = await apiGet(`/fixtures?date=${today}`);
+    const games = (data.response || []).slice(0, 15);
+
+    if (!games.length) {
+      return "⚽【VIP 今日足球】\n\n今天沒有足球賽事。";
+    }
+
+    return `⚽【VIP 今日足球】
+
+${games.map(fixtureLine).join("\n\n")}
+
+━━━━━━━━━━━━
+資料來源：API-Football`;
+  } catch (err) {
+    return `【VIP 今日足球】抓取失敗：${err.message}`;
+  }
+}
+
 async function liveScores() {
   if (!API_KEY) return "【API-Football 即時比分】尚未設定 API_FOOTBALL_KEY。";
 
@@ -452,6 +475,7 @@ ${games.map(fixtureLine).join("\n\n")}
 module.exports = {
   apiGet,
   apiStatus,
+  todayFootball,
   liveScores,
   zhTeam,
   zhLeague
