@@ -165,7 +165,12 @@ const TEAM_ZH = {
 
 // 瑞典女足
 "Husqvarna W": "胡斯克瓦納女足",
-"Linköping W": "林雪平女足",  
+"Linköping W": "林雪平女足",
+
+"Espanyol W": "西班牙人女足",
+"Sevilla W": "塞維利亞女足",
+"Madrid CFF W": "馬德里CFF女足",
+"Barcelona W": "巴塞隆納女足",  
 };
 
 const LEAGUE_ZH = {
