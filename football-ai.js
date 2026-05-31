@@ -102,8 +102,9 @@ async function lastFive(team) {
   }
 
   try {
-    const data = await apiGet(`/teams/${id}/matches?status=FINISHED&limit=5`);
-    const games = (data.matches || []).slice(-5).reverse();
+  const data = await football.apiGet(`/fixtures?date=${new Date().toISOString().slice(0,10)}`);
+
+  const games = data.response || [];
 
     if (!games.length) return `找不到 ${team} 最近5場資料`;
 
@@ -179,7 +180,7 @@ ${f.teams.home.name} 不敗
 }
 async function footballParlay() {
   try {
-    const data = await apiGet(`/fixtures?date=${new Date().toISOString().slice(0,10)}`);
+    const data = await football.apiGet(`/fixtures?date=${new Date().toISOString().slice(0,10)}`);
     const games = data.response || [];
 
     if (games.length < 3) {
