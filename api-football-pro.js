@@ -190,7 +190,14 @@ const TEAM_ZH = {
 "Madrid CFF W": "馬德里CFF女足",
 "Barcelona W": "巴塞隆納女足",
 "Oakland Roots": "奧克蘭根隊",
-"Colorado Springs": "科羅拉多泉開關",  
+"Colorado Springs": "科羅拉多泉開關",
+
+// 美國
+"Oakland Roots": "奧克蘭根隊",
+"Union Omaha": "奧馬哈聯",
+
+// 智利
+"San Marcos de Arica": "阿里卡聖馬科斯",  
 };
 
 const LEAGUE_ZH = {
@@ -314,7 +321,9 @@ const LEAGUE_ZH = {
 "Campeonato de Portugal Prio - Promotion Round": "🇵🇹 葡萄牙錦標聯賽升級附加賽",
 
 "Queensland NPL": "🇦🇺 澳洲昆士蘭超級聯賽",
-"USL Championship": "🇺🇸 美國足球冠軍聯賽",  
+"USL Championship": "🇺🇸 美國足球冠軍聯賽",
+"USL League One": "🇺🇸 美國足球甲級聯賽",
+"Primera B": "🇨🇱 智利乙級聯賽",  
   
 };
 
