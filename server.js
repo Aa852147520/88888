@@ -228,21 +228,90 @@ async function handleEvent(event, client) {
   const isAdmin = ADMIN_USER_ID && userId === ADMIN_USER_ID;
   let reply = "";
 
-  try {
-    if (text === "我的狀態") {
-      reply = vip
-        ? `你目前是 VIP 會員 ✅\n到期日：${vipData.expire_date}`
-        : "你目前不是 VIP 會員。\n輸入「加入VIP」查看方案。";
-    }
+ try {
+  if (text === "我的狀態") {
+    reply = vip
+      ? `你目前是 VIP 會員 ✅\n到期日：${vipData.expire_date}`
+      : "你目前不是 VIP 會員。\n輸入「加入VIP」查看方案。";
+  }
 
-    else if (text.startsWith("足球分析")) {
-      reply = ai.footballAnalysis(text.replace("足球分析", "").trim(), vip);
-    }
+  else if (text === "世足") {
+    return client.replyMessage(event.replyToken, {
+      type: "text",
+      text: "⚽ 世足 AI\n\n請選擇聯賽：",
+      quickReply: {
+        items: [
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "🌎 世界盃",
+              text: "世界盃選單"
+            }
+          },
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "🏆 歐冠",
+              text: "歐冠選單"
+            }
+          },
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "🏴 英超",
+              text: "英超選單"
+            }
+          }
+        ]
+      }
+    });
+  }
 
-    else if (text.startsWith("世界盃 ")) {
-      reply = ai.worldCupAnalysis(text.replace("世界盃", "").trim(), vip);
-    }
+else if (text === "英超選單") {
+    return client.replyMessage(event.replyToken, {
+      type: "text",
+      text: "🏴 英超 AI\n\n請選擇功能：",
+      quickReply: {
+        items: [
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "📅 今日賽程",
+              text: "英超賽程"
+            }
+          },
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "📊 積分榜",
+              text: "英超積分榜"
+            }
+          },
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "🤖 AI分析",
+              text: "進階分析 曼城 vs 利物浦"
+            }
+          }
+        ]
+      }
+    });
+  }
+    
+  else if (text.startsWith("足球分析")) {
+    reply = ai.footballAnalysis(text.replace("足球分析", "").trim(), vip);
+  }
 
+  else if (text.startsWith("世界盃 ")) {
+    reply = ai.worldCupAnalysis(text.replace("世界盃", "").trim(), vip);
+  }
     else if (text === "API狀態") {
       reply = isAdmin
         ? await apiFootball.apiStatus() + "\n\n" + await footballData.apiStatus() + "\n\n" + await tdb.apiStatus()
