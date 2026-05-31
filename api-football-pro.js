@@ -109,7 +109,26 @@ const LEAGUE_ZH = {
   "Emperor Cup": "🏆 日本天皇盃",
 
   // 澳洲
-  "Victoria NPL": "🇦🇺 澳洲維多利亞超級聯賽"
+  "Victoria NPL": "🇦🇺 澳洲維多利亞超級聯賽",
+  // 奧地利
+"Landesliga - Salzburg": "🇦🇹 薩爾斯堡州聯賽",
+"Landesliga - Wien": "🇦🇹 維也納州聯賽",
+
+// 愛沙尼亞
+"Esiliiga B": "🇪🇪 愛沙尼亞乙B聯賽",
+
+// 波蘭
+"Central Youth League": "🇵🇱 波蘭青年聯賽",
+
+// 捷克
+"3. liga - MSFL": "🇨🇿 捷克丙級聯賽 MSFL",
+"3. liga - CFL A": "🇨🇿 捷克丙級聯賽 CFL A組",
+"3. liga - CFL B": "🇨🇿 捷克丙級聯賽 CFL B組",
+
+"4. liga - Divizie A": "🇨🇿 捷克丁級聯賽 A組",
+"4. liga - Divizie B": "🇨🇿 捷克丁級聯賽 B組",
+"4. liga - Divizie C": "🇨🇿 捷克丁級聯賽 C組",
+"4. liga - Divizie D": "🇨🇿 捷克丁級聯賽 D組",
 };
 
 function zhTeam(name) { return TEAM_ZH[name] || name || "未定"; }
