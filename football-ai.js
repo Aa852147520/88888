@@ -136,16 +136,16 @@ async function footballParlay() {
 
     const picks = games.slice(0, 3);
 
-    return `💰【VIP 足球串關】
+return `💰【VIP 足球串關】
 
-1️⃣ ${picks[0].teams.home.name} 不敗
-🏆 ${picks[0].league.name}
+1️⃣ ${football.zhTeam(picks[0].teams.home.name)} 不敗
+🏆 ${football.zhLeague(picks[0].league.name, picks[0].league.country)}
 
-2️⃣ ${picks[1].teams.home.name} 不敗
-🏆 ${picks[1].league.name}
+2️⃣ ${football.zhTeam(picks[1].teams.home.name)} 不敗
+🏆 ${football.zhLeague(picks[1].league.name, picks[1].league.country)}
 
-3️⃣ ${picks[2].teams.home.name} 大 2.5
-🏆 ${picks[2].league.name}
+3️⃣ ${football.zhTeam(picks[2].teams.home.name)} 大 2.5
+🏆 ${football.zhLeague(picks[2].league.name, picks[2].league.country)}
 
 ━━━━━━━━━━━━
 🔥 建議玩法：3串1
