@@ -187,7 +187,7 @@ async function handleEvent(event, client) {
   if (text === "體育") {
   return client.replyMessage(event.replyToken, {
     type: "text",
-    text: "🏆 AI知能分析\n\n請選擇項目：",
+    text: "🏆 AI智能分析\n\n請選擇項目：",
     quickReply: {
       items: [
         {
