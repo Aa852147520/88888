@@ -194,6 +194,7 @@ const LEAGUE_ZH = {
 
   "K League 1": "🇰🇷 韓國K1聯賽",
   "K League 2": "🇰🇷 韓國K2聯賽",
+  "K3 League": "🇰🇷 韓國K3聯賽",
 
   "Chinese Super League": "🇨🇳 中超",
   "Thai League 1": "🇹🇭 泰超",
@@ -285,7 +286,10 @@ const LEAGUE_ZH = {
 "Mineiro - 2": "🇧🇷 巴西米內羅乙級聯賽",
 
 // 葡萄牙
-"Campeonato de Portugal Prio - Promotion Round": "🇵🇹 葡萄牙錦標聯賽升級附加賽",  
+"Campeonato de Portugal Prio - Promotion Round": "🇵🇹 葡萄牙錦標聯賽升級附加賽",
+
+"Queensland NPL": "🇦🇺 澳洲昆士蘭超級聯賽",  
+  
 };
 
 function zhTeam(name) { return TEAM_ZH[name] || name || "未定"; }
