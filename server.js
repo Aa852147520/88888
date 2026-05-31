@@ -183,17 +183,32 @@ app.post("/webhook", line.middleware(config), async (req, res) => {
 async function handleEvent(event, client) {
   if (event.type !== "message" || event.message.type !== "text") return;
 
-const text = event.message.text.trim();
+  const text = event.message.text.trim();
 
 if (text === "體育") {
   return client.replyMessage(event.replyToken, {
     type: "text",
     text: `🏆 AI智能分析
 
-    請選擇項目：
-    ⚽ 世足`,
+請選擇功能：`,
     quickReply: {
       items: [
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "📖 說明",
+            text: "說明"
+          }
+        },
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "💎 VIP方案",
+            text: "加入VIP"
+          }
+        },
         {
           type: "action",
           action: {
