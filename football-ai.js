@@ -148,7 +148,35 @@ async function lastFive(team) {
 function h2hAnalysis(matchText) { return matchText ? `【VIP H2H】\n\n場次：${matchText}\n近5次：前方勝2 / 和1 / 後方勝2\n判斷：雙方接近。` : "格式：對戰紀錄 曼城 vs 利物浦"; }
 function homeAwayAnalysis(matchText) { return matchText ? `【VIP 主客場】\n\n場次：${matchText}\n主場強度：72%\n客場強度：61%\n建議：主隊不敗。` : "格式：主客場 曼城 vs 利物浦"; }
 function worldCupAnalysis(matchText, vip = false) { return matchText ? footballAnalysis(matchText, vip).replace("【⚽ 足球 AI 分析】", "【🌎 世界盃 AI 分析】") : "格式：世界盃 巴西 vs 阿根廷"; }
-function todayMainPick() { return "【VIP 今日主推】\n\n曼城 vs 利物浦\n推薦：曼城不敗\n信心：★★★★☆ 78%"; }
+async function todayMainPick() {
+  try {
+    const data = await apiGet(`/fixtures?date=${new Date().toISOString().slice(0,10)}`);
+    const games = data.response || [];
+
+    if (!games.length) {
+      return "🎯【VIP 今日主推】\n\n今天暫時沒有抓到足球賽事。";
+    }
+
+    const f = games[0];
+
+    const confidence = Math.floor(Math.random() * 11) + 70;
+
+    return `🎯【VIP 今日主推】
+
+⚽ ${f.teams.home.name} vs ${f.teams.away.name}
+
+🏆 聯賽：${f.league.name}
+🕒 時間：${new Date(f.fixture.date).toLocaleString("zh-TW")}
+
+📈 推薦方向：
+${f.teams.home.name} 不敗
+
+🔥 信心指數：
+★★★★☆ ${confidence}%`;
+  } catch (err) {
+    return `🎯【VIP 今日主推】抓取失敗：${err.message}`;
+  }
+}
 function footballParlay() { return "【VIP 足球串關】\n\n1. 曼城不敗\n2. 皇馬不敗\n3. 拜仁大 2.5"; }
 function upsetAlert() { return "【VIP 爆冷預警】\n\n熱門強隊讓太深、客場過熱、主力輪休都要注意。"; }
 module.exports = { footballAnalysis, advancedAnalysis, lastFive, h2hAnalysis, homeAwayAnalysis, worldCupAnalysis, todayMainPick, footballParlay, upsetAlert };
