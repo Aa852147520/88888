@@ -190,7 +190,6 @@ const TEAM_ZH = {
 "Sevilla W": "塞維利亞女足",
 "Madrid CFF W": "馬德里CFF女足",
 "Barcelona W": "巴塞隆納女足",
-"Oakland Roots": "奧克蘭根隊",
 "Colorado Springs": "科羅拉多泉開關",
 
 // 美國
