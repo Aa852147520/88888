@@ -139,13 +139,40 @@ const TEAM_ZH = {
 "Atlético Malveira": "馬爾韋拉競技",
 
 // 肯亞
-"Nairobi United": "奈洛比聯", 
+"Nairobi United": "奈洛比聯",
+
+// 西班牙女足
+"Athletic Club W": "畢爾包競技女足",
+"Alhama W": "阿爾哈馬女足",
+"Levante W": "萊萬特女足",
+"FC Levante Badalona": "萊萬特巴達洛納女足",
+
+// 巴西
+"RB Bragantino": "RB布拉干蒂諾",
+"Internacional": "國際體育會",
+
+// 挪威
+"Arendal": "阿倫達爾",
+"Sotra": "索特拉",
+"Kvik Halden": "奎克哈爾登",
+"Lysekloster": "呂瑟克洛斯特",
+"Notodden": "諾托登",
+"jerv": "耶爾夫",
+"Levanger": "萊萬厄爾",
+"Junkeren": "容克倫",
+"Aalesund II": "奧勒松B隊",
+"Strindheim": "斯特林海姆",
+
+// 瑞典女足
+"Husqvarna W": "胡斯克瓦納女足",
+"Linköping W": "林雪平女足",  
 };
 
 const LEAGUE_ZH = {
   "Premier League": "🇬🇧 英超",
   "La Liga": "🇪🇸 西甲",
-  "Serie A": "🇮🇹 義甲",
+  "Italy Serie A": "🇮🇹 義甲",
+  "Brazil Serie A": "🇧🇷 巴西甲級聯賽",
   "Bundesliga": "🇩🇪 德甲",
   "Ligue 1": "🇫🇷 法甲",
 
@@ -222,12 +249,16 @@ const LEAGUE_ZH = {
 // 挪威
 "2. Division - Group 1": "🇳🇴 挪威乙級聯賽 第1組",
 "2. Division - Group 2": "🇳🇴 挪威乙級聯賽 第2組",
+"3. Division - Girone 2": "🇳🇴 挪威丙級聯賽 第2組",  
 
 // 瑞典
 "Division 2 - Norra Götaland": "🇸🇪 瑞典乙級聯賽 北約塔蘭組",
 "Division 2 - Norra Svealand": "🇸🇪 瑞典乙級聯賽 北斯韋阿蘭組",
 "Division 2 - Södra Svealand": "🇸🇪 瑞典乙級聯賽 南斯韋阿蘭組",
 "Division 2 - Västra Götaland": "🇸🇪 瑞典乙級聯賽 西約塔蘭組",
+  
+// 瑞典女足次級聯賽
+"Elitettan": "🇸🇪 瑞典女子甲級聯賽",
 
 // 越南
 "V.League 1": "🇻🇳 越南甲級聯賽",
