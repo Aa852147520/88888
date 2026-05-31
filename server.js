@@ -289,7 +289,10 @@ else if (text === "英超選單") {
     type: "text",
     text: `🏴 英超 AI
 
-請選擇功能：`,
+ 請選擇聯賽：
+      📅 今日賽程
+      📊 積分榜
+      🤖 AI分析`,
     quickReply: {
       items: [
         {
