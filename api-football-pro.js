@@ -197,8 +197,47 @@ const TEAM_ZH = {
 "Union Omaha": "奧馬哈聯",
 
 // 智利
-"San Marcos de Arica": "阿里卡聖馬科斯",  
-};
+"San Marcos de Arica": "阿里卡聖馬科斯",
+"Čelik": "切利克",
+"Igman Konjic": "伊格曼科尼奇",
+"Radnik Hadžići": "哈季奇工人",
+"GOŠK Gabela": "加貝拉",
+
+"Pors Grenland": "波爾斯格倫蘭",
+"Mjondalen": "米約恩達倫",
+
+"Liniers": "利尼爾斯",
+"Villa Dalmine": "達爾米內別墅",
+"Juventud Unida": "尤文圖德聯",
+"Victoriano Arenas": "維多利亞諾阿雷納斯",
+
+"MP": "米凱利MP",
+"EIF": "埃克納斯IF",
+
+"FBC Melgar": "梅爾加",
+"Alianza Atletico": "阿利安薩競技",
+"El Nacional": "民族隊",
+"LDU Portoviejo": "波托維耶霍大學",
+
+"HPS": "HPS赫爾辛基",
+"PPJ": "PPJ赫爾辛基",
+
+"Kári": "卡里",
+"Dalvík / Reynir": "達爾維克/雷尼爾",
+"Thróttur Vogar": "沃加爾索洛圖爾",
+"Kormákur / Hvöt": "科爾馬庫爾/赫沃特",
+
+"Poland": "波蘭",
+"Ukraine": "烏克蘭",
+
+"Academia Cantolao": "坎托勞學院",
+"U. San Martin": "聖馬丁大學",
+
+"Derby Academie": "德比學院",
+"Bougouni": "布古尼",
+
+"Fenix": "費尼克斯",
+"Rentistas": "倫蒂斯塔斯",
 
 const LEAGUE_ZH = {
   "Premier League": "🇬🇧 英超",
@@ -323,7 +362,30 @@ const LEAGUE_ZH = {
 "Queensland NPL": "🇦🇺 澳洲昆士蘭超級聯賽",
 "USL Championship": "🇺🇸 美國足球冠軍聯賽",
 "USL League One": "🇺🇸 美國足球甲級聯賽",
-"Primera B": "🇨🇱 智利乙級聯賽",  
+"Primera B": "🇨🇱 智利乙級聯賽",
+// 波士尼亞
+"1st League - FBiH": "🇧🇦 波士尼亞甲級聯賽 FBiH",
+
+// 阿根廷
+"Primera B Metropolitana": "🇦🇷 阿根廷大都會乙級聯賽",
+"Primera C": "🇦🇷 阿根廷丙級聯賽",
+
+// 芬蘭
+"Ykkösliiga": "🇫🇮 芬蘭甲級聯賽",
+"Kakkonen - Lohko A": "🇫🇮 芬蘭乙級聯賽 A組",
+
+// 秘魯
+"Primera División": "🇵🇪 秘魯甲級聯賽",
+"Segunda División": "🇵🇪 秘魯乙級聯賽",
+
+// 厄瓜多
+"Liga Pro Serie B": "🇪🇨 厄瓜多乙級聯賽",
+
+// 冰島
+"2. Deild": "🇮🇸 冰島乙級聯賽",
+
+// 馬利
+"Première Division": "🇲🇱 馬利甲級聯賽",  
   
 };
 
