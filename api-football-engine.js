@@ -286,6 +286,7 @@ function worldCupUpsetAlert() {
 
 module.exports = {
   apiStatus,
+  apiGet,
   todayFootball,
   liveScores,
   standings,
