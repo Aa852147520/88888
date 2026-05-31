@@ -151,7 +151,9 @@ function homeAwayAnalysis(matchText) { return matchText ? `【VIP 主客場】\n
 function worldCupAnalysis(matchText, vip = false) { return matchText ? footballAnalysis(matchText, vip).replace("【⚽ 足球 AI 分析】", "【🌎 世界盃 AI 分析】") : "格式：世界盃 巴西 vs 阿根廷"; }
 async function todayMainPick() {
   try {
-    const data = await apiGet(`/fixtures?date=${new Date().toISOString().slice(0,10)}`);
+    const data = await football.apiGet(
+      `/fixtures?date=${new Date().toISOString().slice(0,10)}`
+    );
     const games = data.response || [];
 
     if (!games.length) {
