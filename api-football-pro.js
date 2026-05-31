@@ -385,18 +385,23 @@ function twTime(dateStr) {
 }
 
 function fixtureLine(f, idx) {
+
+  console.log("HOME =", f.teams.home.name);
+  console.log("AWAY =", f.teams.away.name);
+
   console.log(
-  "League:",
-  f.league.country,
-  f.league.name
-);
-  
+    "League:",
+    f.league.country,
+    f.league.name
+  );
+
   const home = zhTeam(f.teams.home.name);
   const away = zhTeam(f.teams.away.name);
+
   const league = zhLeague(
-  f.league.name,
-  f.league.country
-);
+    f.league.name,
+    f.league.country
+  );
   const status = statusZh(f.fixture.status.short);
   const elapsed = f.fixture.status.elapsed ? `｜${f.fixture.status.elapsed}'` : "";
   const goals = f.goals.home !== null || f.goals.away !== null
