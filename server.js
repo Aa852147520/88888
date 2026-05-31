@@ -189,7 +189,7 @@ if (text === "體育") {
   return client.replyMessage(event.replyToken, {
     type: "text",
     text: "🏆 AI智能分析\n\n請選擇項目：
-      世足",
+     ⚽ 世足`,
     quickReply: {
       items: [
         {
@@ -245,10 +245,11 @@ const userId = event.source.userId || "";
   else if (text === "世足") {
     return client.replyMessage(event.replyToken, {
       type: "text",
-      text: "⚽ 世足 AI\n\n請選擇聯賽：
-      🌎世界盃
-      🏆歐冠
-      🏴英超",
+      text: "⚽ 世足 AI\n\n
+      請選擇聯賽：
+      🌎 世界盃
+      🏆 歐冠
+      🏴 英超`,
       quickReply: {
         items: [
           {
