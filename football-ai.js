@@ -98,6 +98,7 @@ async function todayMainPick() {
     const data = await football.apiGet(
       `/fixtures?date=${new Date().toISOString().slice(0,10)}`
     );
+
     const games = data.response || [];
 
     if (!games.length) {
@@ -110,13 +111,13 @@ async function todayMainPick() {
 
     return `🎯【VIP 今日主推】
 
-⚽ ${f.teams.home.name} vs ${f.teams.away.name}
+⚽ ${football.zhTeam(f.teams.home.name)} vs ${football.zhTeam(f.teams.away.name)}
 
-🏆 聯賽：${f.league.name}
+🏆 聯賽：${football.zhLeague(f.league.name, f.league.country)}
 🕒 時間：${new Date(f.fixture.date).toLocaleString("zh-TW")}
 
 📈 推薦方向：
-${f.teams.home.name} 不敗
+${football.zhTeam(f.teams.home.name)} 不敗
 
 🔥 信心指數：
 ★★★★☆ ${confidence}%`;
