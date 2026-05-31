@@ -2,39 +2,85 @@ const API_KEY = process.env.API_FOOTBALL_KEY || "";
 const BASE = "https://v3.football.api-sports.io";
 
 const TEAM_ZH = {
+  // 英超
   "Manchester City": "曼城",
   "Manchester United": "曼聯",
   "Liverpool": "利物浦",
   "Arsenal": "兵工廠",
   "Chelsea": "切爾西",
   "Tottenham": "熱刺",
+
+  // 西甲
   "Real Madrid": "皇家馬德里",
   "Barcelona": "巴塞隆納",
   "Atletico Madrid": "馬德里競技",
+
+  // 德甲
   "Bayern Munich": "拜仁慕尼黑",
   "Borussia Dortmund": "多特蒙德",
+
+  // 法甲
   "Paris Saint Germain": "巴黎聖日耳曼",
   "PSG": "巴黎聖日耳曼",
+
+  // 義甲
   "Inter": "國際米蘭",
   "AC Milan": "AC米蘭",
   "Juventus": "尤文圖斯",
   "Napoli": "拿坡里",
   "Roma": "羅馬",
   "Lazio": "拉齊奧",
+
+  // 南美
   "Boca Juniors": "博卡青年",
-  "River Plate": "河床"
+  "River Plate": "河床",
+  "Cruzeiro EC": "克魯塞羅",
+  "Barcelona SC": "巴塞隆納SC",
+  "Universidad Catolica": "天主教大學",
+  "CD Universidad Católica": "天主教大學",
+
+  // 日本
+  "Blaublitz Akita": "秋田藍閃電",
+  "Consadole Sapporo": "北海道札幌岡薩多",
+
+  "Montedio Yamagata": "山形山神",
+  "Matsumoto Yamaga": "松本山雅",
+
+  "Tochigi SC": "栃木SC",
+  "Parceiro Nagano": "長野帕塞羅",
+
+  "Thespakusatsu Gunma": "群馬草津溫泉",
+  "FC Gifu": "FC岐阜",
+
+  // 澳洲
+  "St. Albans Saints": "聖奧爾本斯聖徒",
+  "Preston Lions": "普雷斯頓雄獅"
 };
 
 const LEAGUE_ZH = {
-  "Premier League": "英格蘭超級聯賽",
-  "La Liga": "西班牙甲級聯賽",
-  "Serie A": "義大利甲級聯賽",
-  "Bundesliga": "德國甲級聯賽",
-  "Ligue 1": "法國甲級聯賽",
-  "UEFA Champions League": "歐洲冠軍聯賽",
-  "UEFA Europa League": "歐霸聯賽",
-  "Copa Libertadores": "南美自由盃",
-  "World Cup": "世界盃"
+  "Premier League": "🇬🇧 英超",
+  "La Liga": "🇪🇸 西甲",
+  "Serie A": "🇮🇹 義甲",
+  "Bundesliga": "🇩🇪 德甲",
+  "Ligue 1": "🇫🇷 法甲",
+
+  "UEFA Champions League": "🏆 歐洲冠軍聯賽",
+  "UEFA Europa League": "🏆 歐霸聯賽",
+
+  "Copa Libertadores": "🏆 南美自由盃",
+  "Copa Sudamericana": "🏆 南美俱樂部盃",
+
+  "World Cup": "🌎 世界盃",
+
+  // 日本
+  "J1 League": "🇯🇵 日本J1聯賽",
+  "J2 League": "🇯🇵 日本J2聯賽",
+  "J3 League": "🇯🇵 日本J3聯賽",
+  "J2/J3 League": "🇯🇵 日本聯賽盃",
+  "Emperor Cup": "🏆 日本天皇盃",
+
+  // 澳洲
+  "Victoria NPL": "🇦🇺 澳洲維多利亞超級聯賽"
 };
 
 function zhTeam(name) { return TEAM_ZH[name] || name || "未定"; }
