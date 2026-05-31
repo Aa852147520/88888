@@ -346,7 +346,11 @@ function twTime(dateStr) {
 }
 
 function fixtureLine(f, idx) {
-  console.log("League Name =", f.league.name);
+  console.log(
+  "League:",
+  f.league.country,
+  f.league.name
+);
   
   const home = zhTeam(f.teams.home.name);
   const away = zhTeam(f.teams.away.name);
