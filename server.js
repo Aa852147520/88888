@@ -188,8 +188,10 @@ const text = event.message.text.trim();
 if (text === "體育") {
   return client.replyMessage(event.replyToken, {
     type: "text",
-    text: "🏆 AI智能分析\n\n請選擇項目：
-     ⚽ 世足`,
+    text: `🏆 AI智能分析
+
+    請選擇項目：
+    ⚽ 世足`,
     quickReply: {
       items: [
         {
@@ -245,7 +247,8 @@ const userId = event.source.userId || "";
   else if (text === "世足") {
     return client.replyMessage(event.replyToken, {
       type: "text",
-      text: "⚽ 世足 AI\n\n
+      text: `⚽ 世足 AI
+
       請選擇聯賽：
       🌎 世界盃
       🏆 歐冠
@@ -282,39 +285,41 @@ const userId = event.source.userId || "";
   }
 
 else if (text === "英超選單") {
-    return client.replyMessage(event.replyToken, {
-      type: "text",
-      text: "🏴 英超 AI\n\n請選擇功能：",
-      quickReply: {
-        items: [
-          {
-            type: "action",
-            action: {
-              type: "message",
-              label: "📅 今日賽程",
-              text: "英超賽程"
-            }
-          },
-          {
-            type: "action",
-            action: {
-              type: "message",
-              label: "📊 積分榜",
-              text: "英超積分榜"
-            }
-          },
-          {
-            type: "action",
-            action: {
-              type: "message",
-              label: "🤖 AI分析",
-              text: "進階分析 曼城 vs 利物浦"
-            }
+  return client.replyMessage(event.replyToken, {
+    type: "text",
+    text: `🏴 英超 AI
+
+請選擇功能：`,
+    quickReply: {
+      items: [
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "📅 今日賽程",
+            text: "英超賽程"
           }
-        ]
-      }
-    });
-  }
+        },
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "📊 積分榜",
+            text: "英超積分榜"
+          }
+        },
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "🤖 AI分析",
+            text: "進階分析 曼城 vs 利物浦"
+          }
+        }
+      ]
+    }
+  });
+}
     
   else if (text.startsWith("足球分析")) {
     reply = ai.footballAnalysis(text.replace("足球分析", "").trim(), vip);
