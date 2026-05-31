@@ -60,7 +60,16 @@ function advancedAnalysis(matchText) {
 
 信心：${stars(n.conf)} ${n.conf}%`;
 }
-function lastFive(team) { return team ? `【VIP 最近5場】\n\n球隊：${team}\n近5場：勝 / 勝 / 和 / 負 / 勝\n狀態：穩定` : "格式：最近5場 曼城"; }
+async function lastFive(team) {
+  if (!team) return "格式：最近5場 曼城";
+
+  return `【VIP 最近5場】
+
+球隊：${team}
+近5場：即時資料抓取中
+
+提醒：這裡要串接 Football API 才能顯示真正最近5場。`;
+}
 function h2hAnalysis(matchText) { return matchText ? `【VIP H2H】\n\n場次：${matchText}\n近5次：前方勝2 / 和1 / 後方勝2\n判斷：雙方接近。` : "格式：對戰紀錄 曼城 vs 利物浦"; }
 function homeAwayAnalysis(matchText) { return matchText ? `【VIP 主客場】\n\n場次：${matchText}\n主場強度：72%\n客場強度：61%\n建議：主隊不敗。` : "格式：主客場 曼城 vs 利物浦"; }
 function worldCupAnalysis(matchText, vip = false) { return matchText ? footballAnalysis(matchText, vip).replace("【⚽ 足球 AI 分析】", "【🌎 世界盃 AI 分析】") : "格式：世界盃 巴西 vs 阿根廷"; }
