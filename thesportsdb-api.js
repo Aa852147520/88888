@@ -34,6 +34,13 @@ const TEAM_ZH = {
   "Voitsberg": "福伊茨貝格",
   "Gleisdorf 09": "格萊斯多夫09",
   "Junge Wikinger Ried": "里德青年維京人"
+
+  "Real Zaragoza": "皇家薩拉戈薩",
+  "Málaga": "馬拉加",
+  "Córdoba": "科爾多瓦",
+  "Huesca": "韋斯卡",
+  "Burgos": "布爾戈斯",
+  "FC Andorra": "安道爾FC",
 };
 
 const LEAGUE_ZH = {
@@ -60,6 +67,10 @@ const LEAGUE_ZH = {
   "Austrian Regionalliga Mitte": "🇦🇹 奧地利中部地區聯賽",
   "Austrian Regionalliga West": "🇦🇹 奧地利西部地區聯賽",
   "Austrian Regionalliga East": "🇦🇹 奧地利東部地區聯賽"
+
+  "Spanish La Liga 2": "🇪🇸 西班牙乙級聯賽",
+  "La Liga 2": "🇪🇸 西班牙乙級聯賽",
+  "Segunda División": "🇪🇸 西班牙乙級聯賽",
 };
 
 function zhTeam(name) {
