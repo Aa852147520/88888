@@ -440,15 +440,5 @@ ${games.map(fixtureLine).join("\n\n")}
 module.exports = {
   apiGet,
   apiStatus,
-  todayFootball,
-  liveScores,
-  standings,
-  worldCupHelp,
-  todayWorldCup,
-  worldCupSchedule,
-  worldCupStandings,
-  worldCupPrediction,
-  worldCupMainPick,
-  worldCupParlay,
-  worldCupUpsetAlert
+  liveScores
 };
