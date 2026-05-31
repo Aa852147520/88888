@@ -286,8 +286,10 @@ const LEAGUE_ZH = {
 };
 
 function zhTeam(name) { return TEAM_ZH[name] || name || "未定"; }
-function zhLeague(name) { return LEAGUE_ZH[name] || name || "足球賽事"; }
-
+function zhLeague(name, country) {
+  const key = `${country} ${name}`;
+  return LEAGUE_ZH[key] || LEAGUE_ZH[name] || name;
+}
 function statusZh(short) {
   const map = {
     "TBD": "時間未定",
