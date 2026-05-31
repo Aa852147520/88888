@@ -100,7 +100,46 @@ const TEAM_ZH = {
 // 肯亞
 "GOR Mahia": "高爾馬希亞",
 "AFC Leopards": "AFC獵豹",
-"Tusker": "塔斯克",  
+"Tusker": "塔斯克",
+
+ // 德國
+"Hilden": "希爾登",
+"Monheim": "蒙海姆",
+"SG Wattenscheid 09": "瓦滕沙伊德09",
+"Lippstadt 08": "利普施塔特08",
+"Finnentrop / Bamenohl": "芬嫩特羅普/巴門諾爾",
+"Schermbeck": "舍姆貝克",
+"Bornheim": "博恩海姆",
+"VfL Vichttal": "菲希塔爾",
+"Teutonia Weiden": "魏登條頓尼亞",
+"SSV Merten": "梅爾滕",
+"Eintracht Hohkeppel": "霍克佩爾",
+"Düren Merzenich": "迪倫梅爾策尼希",
+
+// 波蘭青年
+"Śląsk Wrocław U19": "弗羅茨瓦夫U19",
+"Jagiellonia U19": "喬治羅尼亞U19",
+
+// 瑞典
+"Lidingö": "利丁厄",
+"Falu BS": "法魯BS",
+
+// 國家隊
+"Switzerland": "瑞士",
+"Jordan": "約旦",
+
+// 巴西
+"Itaquá Athletico Clube": "伊塔誇競技",
+"Barcelona EC": "巴塞隆納EC",
+"BOA": "博阿",
+"Guarani MG": "瓜拉尼MG",
+
+// 葡萄牙
+"Oliveira Hospital": "奧利維拉醫院",
+"Atlético Malveira": "馬爾韋拉競技",
+
+// 肯亞
+"Nairobi United": "奈洛比聯", 
 };
 
 const LEAGUE_ZH = {
@@ -197,7 +236,22 @@ const LEAGUE_ZH = {
 "FKF Premier League": "🇰🇪 肯亞超級聯賽",
 
 // 挪威
-"3. Division - Girone 4": "🇳🇴 挪威丙級聯賽 第4組",  
+"3. Division - Girone 4": "🇳🇴 挪威丙級聯賽 第4組",
+
+// 德國地區聯賽
+"Oberliga - Niederrhein": "🇩🇪 德國高級聯賽 下萊茵區",
+"Oberliga - Westfalen": "🇩🇪 德國高級聯賽 威斯特法倫區",
+"Oberliga - Mittelrhein": "🇩🇪 德國高級聯賽 中萊茵區",
+
+// 國際友誼賽
+"Friendlies": "🌍 國際友誼賽",
+
+// 巴西
+"Paulista Série B": "🇧🇷 巴西聖保羅州乙級聯賽",
+"Mineiro - 2": "🇧🇷 巴西米內羅乙級聯賽",
+
+// 葡萄牙
+"Campeonato de Portugal Prio - Promotion Round": "🇵🇹 葡萄牙錦標聯賽升級附加賽",  
 };
 
 function zhTeam(name) { return TEAM_ZH[name] || name || "未定"; }
