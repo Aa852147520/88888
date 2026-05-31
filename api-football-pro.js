@@ -54,7 +54,35 @@ const TEAM_ZH = {
 
   // 澳洲
   "St. Albans Saints": "聖奧爾本斯聖徒",
-  "Preston Lions": "普雷斯頓雄獅"
+  "Preston Lions": "普雷斯頓雄獅",
+
+  // 愛沙尼亞
+"Narva U21": "納爾瓦U21",
+"JK Tabasalu": "塔巴薩魯",
+
+// 韓國
+"Yeoju Sejong": "驪州世宗",
+"Daejeon Korail": "大田韓國鐵路",
+
+// 澳洲
+"Olympic": "奧林匹克FC",
+"Brisbane City": "布里斯本城",
+
+// 奧地利
+"Bürmoos": "布爾莫斯",
+"Salzburger AK": "薩爾斯堡AK",
+"Slovan HAC": "斯洛文HAC",
+"Wienerberg": "維也納山",
+
+// 捷克
+"Zbrojovka Brno II": "布爾諾B隊",
+"Hlučín": "赫魯欽",
+"Sigma Olomouc II": "奧洛穆茨B隊",
+"Blansko": "布蘭斯科",
+"Uničov": "烏尼喬夫",
+"Slovácko II": "斯洛瓦茨科B隊",
+"Znojmo": "茲諾伊莫",
+"Sparta Brno": "布爾諾斯巴達",
 };
 
 const LEAGUE_ZH = {
