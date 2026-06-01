@@ -94,12 +94,25 @@ function h2hAnalysis(matchText) { return matchText ? `【VIP H2H】\n\n場次：
 function homeAwayAnalysis(matchText) { return matchText ? `【VIP 主客場】\n\n場次：${matchText}\n主場強度：72%\n客場強度：61%\n建議：主隊不敗。` : "格式：主客場 曼城 vs 利物浦"; }
 async function worldCupAnalysis(matchText, vip = false) {
   if (!vip) {
-    return `🔒【VIP限定】
+   async function worldCupAnalysis(matchText, vip = false) {
+  if (!vip) {
+    return `🔒【VIP專屬功能】
 
-🌎 世界盃 AI 即時分析為 VIP 功能
+🌎 世界盃 AI 即時分析
+📊 勝率預測
+⚽ 大小球分析
+📈 AI 推薦方向
 
-請輸入：
-加入VIP`;
+此功能僅限 VIP 會員使用
+
+━━━━━━━━━━━━━━━━━━━━━━
+[如何加入VIP]
+
+請聯絡管理員開通VIP
+
+管理員官方LINE: @058GVOKK
+
+立即開通即可使用完整分析`;
   }
 
   try {
