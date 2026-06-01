@@ -440,9 +440,9 @@ else if (text === "世界盃選單") {
     reply = ai.footballAnalysis(text.replace("足球分析", "").trim(), vip);
   }
 
-  else if (text.startsWith("世界盃 ")) {
-    reply = ai.worldCupAnalysis(text.replace("世界盃", "").trim(), vip);
-  }
+ else if (text.startsWith("世界盃 ")) {
+  reply = await ai.worldCupAnalysis(text.replace("世界盃", "").trim(), vip);
+}
     else if (text === "API狀態") {
       reply = isAdmin
         ? await apiFootball.apiStatus() + "\n\n" + await footballData.apiStatus() + "\n\n" + await tdb.apiStatus()
