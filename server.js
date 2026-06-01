@@ -397,35 +397,51 @@ else if (text === "英超選單") {
 }
 
 else if (text === "世界盃選單") {
-    return client.replyMessage(event.replyToken, {
-      type: "text",
-      text: `🌎 世界盃 AI
+  return client.replyMessage(event.replyToken, {
+    type: "text",
+    text: `🌎 世界盃 AI
 
 請選擇功能：
 📅 今日賽事
 🤖 AI分析`,
-      quickReply: {
-        items: [
-          {
-            type: "action",
-            action: {
-              type: "message",
-              label: "📅 今日賽事",
-              text: "世界盃今日賽事"
-            }
-          },
-          {
-            type: "action",
-            action: {
-              type: "message",
-              label: "🤖 AI分析",
-              text: "世界盃 巴西 vs 阿根廷"
-            }
+    quickReply: {
+      items: [
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "🇧🇷 巴西vs阿根廷",
+            text: "世界盃 巴西 vs 阿根廷"
           }
-        ]
-      }
-    });
-  }
+        },
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "🇫🇷 法國vs英格蘭",
+            text: "世界盃 法國 vs 英格蘭"
+          }
+        },
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "🇩🇪 德國vs西班牙",
+            text: "世界盃 德國 vs 西班牙"
+          }
+        },
+        {
+          type: "action",
+          action: {
+            type: "message",
+            label: "🌎 今日世界盃",
+            text: "世界盃 今日賽事"
+          }
+        }
+      ]
+    }
+  });
+}
 
   else if (text === "世界盃今日賽事") {
   reply = await vipOnly(vip, () => smartTodayFootball());
