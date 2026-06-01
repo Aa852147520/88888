@@ -454,7 +454,7 @@ else if (text === "世界盃選單") {
     }
 
     else if (text === "今日足球") {
-  reply = vip ? await football.todayFootball() : needVip();
+  reply = vip ? await apiFootball.todayFootball() : needVip();
 }
 
     else if (text === "備援今日足球") {
