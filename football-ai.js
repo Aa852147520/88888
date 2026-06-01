@@ -92,7 +92,22 @@ async function lastFive(team) {
   
 function h2hAnalysis(matchText) { return matchText ? `【VIP H2H】\n\n場次：${matchText}\n近5次：前方勝2 / 和1 / 後方勝2\n判斷：雙方接近。` : "格式：對戰紀錄 曼城 vs 利物浦"; }
 function homeAwayAnalysis(matchText) { return matchText ? `【VIP 主客場】\n\n場次：${matchText}\n主場強度：72%\n客場強度：61%\n建議：主隊不敗。` : "格式：主客場 曼城 vs 利物浦"; }
-function worldCupAnalysis(matchText, vip = false) { return matchText ? footballAnalysis(matchText, vip).replace("【⚽ 足球 AI 分析】", "【🌎 世界盃 AI 分析】") : "格式：世界盃 巴西 vs 阿根廷"; }
+function worldCupAnalysis(matchText, vip = false) {
+  if (!vip) {
+    return `🔒【VIP限定】
+
+🌎 世界盃 AI 分析為 VIP 功能
+
+請輸入：
+加入VIP
+
+查看方案與開通方式。`;
+  }
+
+  return matchText
+    ? footballAnalysis(matchText, vip).replace("【⚽ 足球 AI 分析】", "【🌎 世界盃 AI 分析】")
+    : "格式：世界盃 巴西 vs 阿根廷";
+}
 async function todayMainPick() {
   try {
     const data = await football.apiGet(
