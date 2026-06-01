@@ -104,13 +104,8 @@ LINE: @058gvokk`;
 function helpText(vip, isAdmin) {
   return `【⚽ 足球 AI 智能分析】
 
-免費可用：
-足球分析 皇馬 vs 巴薩
-世界盃 巴西 vs 阿根廷
-加入VIP
-我的狀態
-
 VIP 專屬：
+AI分析
 即時比分
 專業即時比分
 今日足球
