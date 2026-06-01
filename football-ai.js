@@ -105,7 +105,7 @@ async function worldCupAnalysis(matchText, vip = false) {
 此功能僅限 VIP 會員使用
 
 ━━━━━━━━━━━━━━━━━━━━━━
-[如何加入VIP]
+【如何加入VIP】
 
 請聯絡管理員開通VIP
 
