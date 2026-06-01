@@ -92,22 +92,50 @@ async function lastFive(team) {
   
 function h2hAnalysis(matchText) { return matchText ? `【VIP H2H】\n\n場次：${matchText}\n近5次：前方勝2 / 和1 / 後方勝2\n判斷：雙方接近。` : "格式：對戰紀錄 曼城 vs 利物浦"; }
 function homeAwayAnalysis(matchText) { return matchText ? `【VIP 主客場】\n\n場次：${matchText}\n主場強度：72%\n客場強度：61%\n建議：主隊不敗。` : "格式：主客場 曼城 vs 利物浦"; }
-function worldCupAnalysis(matchText, vip = false) {
+async function worldCupAnalysis(matchText, vip = false) {
   if (!vip) {
     return `🔒【VIP限定】
 
-🌎 世界盃 AI 分析為 VIP 功能
+🌎 世界盃 AI 即時分析為 VIP 功能
 
 請輸入：
-加入VIP
-
-查看方案與開通方式。`;
+加入VIP`;
   }
 
-  return matchText
-    ? footballAnalysis(matchText, vip).replace("【⚽ 足球 AI 分析】", "【🌎 世界盃 AI 分析】")
-    : "格式：世界盃 巴西 vs 阿根廷";
+  try {
+    const data = await football.apiGet(`/fixtures?date=${new Date().toISOString().slice(0,10)}`);
+    const games = data.response || [];
+
+    const f = games[0];
+    if (!f) return "🌎【世界盃 AI 即時分析】\n\n目前沒有抓到今日賽事。";
+
+    const home = football.zhTeam(f.teams.home.name);
+    const away = football.zhTeam(f.teams.away.name);
+    const league = football.zhLeague(f.league.name, f.league.country);
+
+    const n = baseNumbers(`${home} vs ${away}`);
+
+    return `🌎【世界盃 AI 即時分析】
+
+場次：${home} vs ${away}
+聯賽：${league}
+時間：${new Date(f.fixture.date).toLocaleString("zh-TW")}
+
+主勝：${n.home}%
+和局：${n.draw}%
+客勝：${n.away}%
+
+大 2.5：${n.over25}%
+雙方進球 YES：${n.btts}%
+角球：${n.cornersLow}～${n.cornersHigh} 顆
+
+建議方向：${n.home >= n.away ? "主隊不敗 / 保守方向" : "客隊不敗 / 保守方向"}
+信心指數：${stars(n.conf)} ${n.conf}%`;
+  } catch (err) {
+    return `🌎【世界盃 AI 即時分析】抓取失敗：${err.message}`;
+  }
 }
+
 async function todayMainPick() {
   try {
     const data = await football.apiGet(
@@ -121,7 +149,6 @@ async function todayMainPick() {
     }
 
     const f = games[0];
-
     const confidence = Math.floor(Math.random() * 11) + 70;
 
     return `🎯【VIP 今日主推】
