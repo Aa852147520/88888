@@ -94,8 +94,7 @@ function h2hAnalysis(matchText) { return matchText ? `【VIP H2H】\n\n場次：
 function homeAwayAnalysis(matchText) { return matchText ? `【VIP 主客場】\n\n場次：${matchText}\n主場強度：72%\n客場強度：61%\n建議：主隊不敗。` : "格式：主客場 曼城 vs 利物浦"; }
 async function worldCupAnalysis(matchText, vip = false) {
   if (!vip) {
-   async function worldCupAnalysis(matchText, vip = false) {
-  if (!vip) {
+
     return `🔒【VIP專屬功能】
 
 🌎 世界盃 AI 即時分析
