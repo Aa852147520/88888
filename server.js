@@ -401,9 +401,12 @@ else if (text === "世界盃選單") {
     type: "text",
     text: `🌎 世界盃 AI
 
-請選擇功能：
-📅 今日賽事
-🤖 AI分析`,
+請選擇分析場次：
+
+[📅 今日世界盃]
+[🇧🇷 巴西vs阿根廷]
+[🇫🇷 法國vs英格蘭]
+[🇩🇪 德國vs西班牙]`,
     quickReply: {
       items: [
         {
@@ -435,7 +438,7 @@ else if (text === "世界盃選單") {
           action: {
             type: "message",
             label: "🌎 今日世界盃",
-            text: "世界盃 今日賽事"
+            text: "世界盃今日賽事"
           }
         }
       ]
