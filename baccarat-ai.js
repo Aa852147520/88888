@@ -170,29 +170,21 @@ ${road.join(" ")}
 統計：
 莊：${r.banker}閒：${r.player}和：${r.tie}
 
-目前型態：
-${r.streak.count}連${r.streak.side || "無"}
+目前型態：${r.streak.count}連${r.streak.side || "無"}
 
-跳局比例：
-${r.alt}%
+跳局比例：${r.alt}%
 
-分析模型：
-${r.model}
+分析模型：${r.model}
 
 ━━━━━━━━━━━━
 
-下一手建議：
-${r.next} ${r.color}
+下一手建議：${r.next} ${r.color}
 
-信心：
-${stars(r.conf)} ${r.conf}%
+信心：${stars(r.conf)} ${r.conf}%
 
-風險：
-${r.risk}
+風險：${r.risk}
 
-即時盤勢判斷：
-${r.reason}
-
+即時盤勢判斷：${r.reason}
 
 ⚠️ 僅供參考，請控制注碼。`;
 }
