@@ -302,7 +302,54 @@ async function handleEvent(event, client) {
     reply = `系統錯誤：${err.message}`;
   }
 
-  return client.replyMessage(event.replyToken, { type: "text", text: reply });
+ return client.replyMessage(event.replyToken, {
+type: "text",
+text: reply,
+quickReply: {
+items: [
+{
+type: "action",
+action: {
+type: "message",
+label: "🔴 莊",
+text: "莊"
 }
+},
+{
+type: "action",
+action: {
+type: "message",
+label: "🟢 和",
+text: "和"
+}
+},
+{
+type: "action",
+action: {
+type: "message",
+label: "🔵 閒",
+text: "閒"
+}
+},
+{
+type: "action",
+action: {
+type: "message",
+label: "📋 我的路單",
+text: "我的路單"
+}
+},
+{
+type: "action",
+action: {
+type: "message",
+label: "🗑️ 清除路單",
+text: "清除路單"
+}
+}
+]
+}
+});
+
 
 app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Baccarat Bot V11 Live running"));
