@@ -64,29 +64,29 @@ function corePredict(road) {
     model = "長龍續走模型";
   } else if (streak.count === 3) {
     next = streak.side === "莊" ? "閒" : "莊";
-    reason = `目前3連${streak.side}，AI判斷斷龍機率提高。`;
+    reason = `即時盤勢分析，目前 ${streak.count} 連${streak.side}，AI判斷仍有續龍機會。`;
     conf = 74;
     model = "斷龍模型";
   } else if (alt >= 70) {
     const last = noTie[noTie.length - 1] || "莊";
     next = last === "莊" ? "閒" : "莊";
-    reason = `目前跳局比例偏高（${alt}%），AI判斷延續一莊一閒節奏。`;
+    reason = `即時盤勢分析，目前出現 ${streak.count} 連${streak.side}，AI判斷斷龍機率提高。`;
     conf = 73;
     model = "跳局模型";
   } else if (banker > player + 3) {
     next = "閒";
-    reason = "莊方比例明顯偏高，AI判斷閒方修正機率提升。";
+    reason = "即時盤勢分析，目前跳局比例 ${alt}% ，AI判斷延續一莊一閒節奏。";
     conf = 71;
     model = "比例修正模型";
   } else if (player > banker + 3) {
     next = "莊";
-    reason = "閒方比例明顯偏高，AI判斷莊方修正機率提升。";
+    reason = "即時盤勢分析，莊閒比例出現失衡，AI判斷修正機率提升。";
     conf = 71;
     model = "比例修正模型";
   } else {
     const last = noTie[noTie.length - 1] || "莊";
     next = last === "莊" ? "閒" : "莊";
-    reason = "目前莊閒分布接近，AI採用短線反向模型。";
+    reason = "即時盤勢分析中，目前路單節奏穩定，AI偵測下一手出現反向機率較高。";
     conf = 64 + (road.length % 9);
     model = "短線反向模型";
   }
@@ -140,7 +140,7 @@ ${r.unit}
 風險：
 ${r.risk}
 
-AI判斷：
+即時盤勢判斷：
 ${r.reason}
 
 ⚠️ 僅供參考，請控制注碼。`;
@@ -190,7 +190,7 @@ ${stars(r.conf)} ${r.conf}%
 風險：
 ${r.risk}
 
-AI判斷：
+即時盤勢判斷：
 ${r.reason}
 
 
