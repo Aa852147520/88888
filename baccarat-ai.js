@@ -79,7 +79,7 @@ function predict(text) {
   const unit = conf >= 82 ? "2注" : "1注";
   const color = next === "莊" ? "🔴" : "🔵";
 
-  return `🎰【黃金右腳 AI 百家預測】
+  return `🎰【POA AI 百家預測】
 
 路單：
 ${road.join(" ")}
