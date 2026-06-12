@@ -70,40 +70,67 @@ async function listVip(limit = 30) {
   return data || [];
 }
 
+async function getRoad(userId) {
+  const { data, error } = await supabase
+    .from("baccarat_roads")
+    .select("road")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error || !data) return [];
+  return Array.isArray(data.road) ? data.road : [];
+}
+
+async function saveRoad(userId, road) {
+  const { error } = await supabase.from("baccarat_roads").upsert({
+    user_id: userId,
+    road,
+    updated_at: new Date().toISOString()
+  }, { onConflict: "user_id" });
+
+  if (error) throw error;
+}
+
+async function clearRoad(userId) {
+  await saveRoad(userId, []);
+}
+
 function startText() {
-  return `🎰【黃金右腳 AI 百家預測 】
+  return `🎰【黃金右腳 AI 百家即時分析 V11】
 
-請輸入路單：
+即時分析玩法：
+直接輸入：
+莊
+閒
+和
 
-莊 閒 莊 莊 閒
+系統會自動累積路單並分析下一手。
 
-支援指令：
+常用指令：
 開始
 教學
-百家預測 莊 閒 莊
+我的路單
+清除路單
 我的ID
 我的狀態
 加入VIP
 
-VIP功能：
-✅ AI百家預測
-✅ 信心指數
-✅ 風險分級
-✅ 注碼建議
-✅ 長龍/斷龍提醒
-✅ 莊閒趨勢分析`;
+一次輸入整串也可以：
+百家預測 莊 閒 莊 莊 閒`;
 }
 
 function vipInfo() {
   return `👑【VIP會員方案】
 
 VIP解鎖：
-✅ 百家AI預測
-✅ 下注建議
+✅ 即時百家分析
+✅ 每位會員獨立路單
+✅ 自動累積莊閒和
+✅ 下一手建議
 ✅ 信心百分比
-✅ 風險提醒
-✅ 長龍/斷龍判斷
-✅ 每日主推
+✅ 風險分級
+✅ 注碼建議
+✅ 長龍/斷龍提醒
 
 管理員開通格式：
 開通VIP USER_ID 30`;
@@ -121,28 +148,32 @@ function needVip() {
 }
 
 function teachText() {
-  return `📘【百家預測教學】
+  return `📘【即時百家分析教學】
 
-請用文字輸入最近路單：
+1. 開局輸入：
+清除路單
 
-莊 閒 莊 莊 閒
+2. 每一手結束後輸入：
+莊
 或
-百家預測 莊 閒 莊 莊 閒
+閒
+或
+和
 
-系統會分析：
-1. 莊閒比例
-2. 連莊連閒
-3. 斷龍機率
-4. 下一手方向
-5. 信心指數
-6. 注碼建議
+3. 系統會自動回覆：
+目前路單
+莊閒統計
+連莊連閒
+下一手建議
+信心指數
+注碼建議
 
-提醒：
-預測僅供參考，請控制風險。`;
+也可以一次輸入：
+百家預測 莊 閒 莊 莊 閒`;
 }
 
-app.get("/", (req, res) => res.send("LINE Baccarat Bot V10 is running. Webhook: /webhook"));
-app.get("/health", (req, res) => res.json({ ok: true, version: "v10" }));
+app.get("/", (req, res) => res.send("LINE Baccarat Bot V11 Live is running. Webhook: /webhook"));
+app.get("/health", (req, res) => res.json({ ok: true, version: "v11-live" }));
 
 app.post("/webhook", line.middleware(config), async (req, res) => {
   try {
@@ -187,36 +218,85 @@ async function handleEvent(event, client) {
       reply = vip
         ? `你目前是 VIP 會員 ✅\n到期日：${vipData.expire_date}`
         : "你目前不是 VIP 會員。\n輸入「加入VIP」查看方案。";
-    } else if (text.startsWith("開通VIP") && isAdmin) {
+    }
+
+    else if (text.startsWith("開通VIP") && isAdmin) {
       const parts = text.split(/\s+/);
       const target = parts[1];
       const days = Number(parts[2] || 30);
       reply = target ? `已開通 VIP ✅\nUser ID：${target}\n到期日：${await addVip(target, days)}` : "格式：開通VIP LINE_USER_ID 天數";
-    } else if (text.startsWith("取消VIP") && isAdmin) {
+    }
+
+    else if (text.startsWith("取消VIP") && isAdmin) {
       const target = text.split(/\s+/)[1];
       if (!target) reply = "格式：取消VIP LINE_USER_ID";
       else {
         await removeVip(target);
         reply = `已取消 VIP：${target}`;
       }
-    } else if (text === "VIP名單" && isAdmin) {
+    }
+
+    else if (text === "VIP名單" && isAdmin) {
       const rows = await listVip();
       reply = rows.length
         ? "【VIP名單】\n" + rows.map(r => `${r.status === "active" ? "✅" : "❌"} ${r.user_id}\n到期：${r.expire_date}`).join("\n\n")
         : "目前沒有VIP資料。";
-    } else if (text.includes("莊") || text.includes("閒") || text.startsWith("百家預測")) {
+    }
+
+    else if (text === "清除路單") {
       if (!vip && !isAdmin) reply = needVip();
-      else reply = baccarat.predict(text.replace("百家預測", "").trim());
-    } else {
+      else {
+        await clearRoad(userId);
+        reply = "✅ 已清除你的百家路單。\n\n請開始輸入：莊 / 閒 / 和";
+      }
+    }
+
+    else if (text === "我的路單") {
+      if (!vip && !isAdmin) reply = needVip();
+      else {
+        const road = await getRoad(userId);
+        reply = road.length
+          ? `🎰【你的目前路單】\n\n${road.join(" ")}\n\n總手數：${road.length}`
+          : "目前沒有路單。\n請輸入：莊 / 閒 / 和";
+      }
+    }
+
+    else if (["莊", "閒", "和", "庄"].includes(text)) {
+      if (!vip && !isAdmin) {
+        reply = needVip();
+      } else {
+        const value = text === "庄" ? "莊" : text;
+        const road = await getRoad(userId);
+        road.push(value);
+        const limitedRoad = road.slice(-80);
+        await saveRoad(userId, limitedRoad);
+        reply = baccarat.livePredict(limitedRoad);
+      }
+    }
+
+    else if (text.includes("莊") || text.includes("閒") || text.startsWith("百家預測")) {
+      if (!vip && !isAdmin) {
+        reply = needVip();
+      } else {
+        const roadText = text.replace("百家預測", "").trim();
+        reply = baccarat.predict(roadText);
+      }
+    }
+
+    else {
       reply = `收到：「${text}」
 
 請輸入：
 開始
 教學
-百家預測 莊 閒 莊 莊 閒
-我的狀態
+莊
+閒
+和
+我的路單
+清除路單
 加入VIP`;
     }
+
   } catch (err) {
     console.error("Command error:", err);
     reply = `系統錯誤：${err.message}`;
@@ -225,4 +305,4 @@ async function handleEvent(event, client) {
   return client.replyMessage(event.replyToken, { type: "text", text: reply });
 }
 
-app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Baccarat Bot V10 running"));
+app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Baccarat Bot V11 Live running"));

@@ -1,6 +1,6 @@
 {
-  "name": "line-baccarat-bot-v10",
-  "version": "10.0.0",
+  "name": "line-baccarat-bot-v11-live",
+  "version": "11.0.0",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

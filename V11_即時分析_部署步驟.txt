@@ -1,0 +1,31 @@
+LINE 百家預測機器人 V11 即時分析版 部署步驟
+
+1. 解壓縮 line-baccarat-bot-v11-live.zip
+2. 到 GitHub 原本專案
+3. 刪除舊檔案
+4. 上傳 V11 全部檔案
+5. Commit changes
+
+6. 到 Supabase SQL Editor
+執行：
+supabase-schema.sql
+
+注意：V11 新增 baccarat_roads 表，用來保存每位會員路單。
+
+7. Render → Manual Deploy → Deploy Latest Commit
+
+8. LINE 測試：
+開始
+我的ID
+加入VIP
+
+9. 管理員開通VIP：
+開通VIP USER_ID 30
+
+10. VIP測試：
+清除路單
+莊
+閒
+莊
+我的路單
+清除路單
