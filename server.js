@@ -96,7 +96,7 @@ async function clearRoad(userId) {
 }
 
 function startText() {
-  return `🎰【黃金右腳 AI 百家即時分析 V11】
+  return `🎰【即時百家分析教學】
 
 即時分析玩法：
 直接輸入：
@@ -132,8 +132,8 @@ VIP解鎖：
 ✅ 注碼建議
 ✅ 長龍/斷龍提醒
 
-管理員開通格式：
-開通VIP USER_ID 30`;
+請聯絡客服開通🔒
+LINE:@058gvokk`;
 }
 
 function needVip() {
@@ -144,7 +144,8 @@ function needVip() {
 輸入：
 加入VIP
 
-或聯絡客服開通。`;
+請聯絡客服開通🔒
+LINE:@058gvokk`;
 }
 
 function teachText() {
