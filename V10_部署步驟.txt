@@ -1,0 +1,43 @@
+LINE 百家預測機器人 V10 部署步驟
+
+1. 解壓縮 line-baccarat-bot-v10.zip
+2. 到 GitHub 建立新專案 line-baccarat-bot-v10
+3. 上傳全部檔案
+4. 到 Render Dashboard
+5. New → Web Service
+6. Connect GitHub → 選 line-baccarat-bot-v10
+
+Render 設定：
+Build Command:
+npm install
+
+Start Command:
+npm start
+
+Environment Variables：
+LINE_CHANNEL_ACCESS_TOKEN
+LINE_CHANNEL_SECRET
+ADMIN_USER_ID
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+
+7. Supabase SQL Editor 執行 supabase-schema.sql
+
+8. LINE Developers：
+Webhook URL：
+https://你的-render網址.onrender.com/webhook
+
+Use webhook：開啟
+Auto-reply：關閉
+
+9. LINE 測試：
+開始
+我的ID
+加入VIP
+
+10. 管理員開通VIP：
+開通VIP USER_ID 30
+
+11. VIP測試：
+莊 閒 莊 莊 閒
+百家預測 莊 閒 莊 莊 閒

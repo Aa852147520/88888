@@ -1,7 +1,6 @@
 {
-  "name": "line-football-ai-v11-live-pro",
-  "version": "11.0.0",
-  "description": "LINE Football AI V11 Pro Live Scores: API-Football primary + Football-Data.org + TheSportsDB fallback",
+  "name": "line-baccarat-bot-v10",
+  "version": "10.0.0",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
