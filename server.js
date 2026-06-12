@@ -350,6 +350,6 @@ text: "清除路單"
 ]
 }
 });
-
+}
 
 app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Baccarat Bot V11 Live running"));
