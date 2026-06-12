@@ -102,7 +102,7 @@ function predict(text) {
   const road = normalizeRoad(text);
 
   if (road.length < 3) {
-    return `🎰【AI百家預測】
+    return `🎰【即時百家分析】
 
 路單太短，請至少輸入3手以上。
 
@@ -112,15 +112,13 @@ function predict(text) {
 
   const r = corePredict(road);
 
-  return `🎰【黃金右腳 AI 百家預測】
+  return `🎰【即時百家分析】
 
 路單：
 ${road.join(" ")}
 
 統計：
-莊：${r.banker}
-閒：${r.player}
-和：${r.tie}
+莊：${r.banker}閒：${r.player}和：${r.tie}
 
 目前型態：
 ${r.streak.count}連${r.streak.side || "無"}
@@ -162,7 +160,7 @@ ${(road || []).join(" ") || "尚未建立"}
 
   const r = corePredict(road);
 
-  return `⚡【黃金右腳 即時百家分析】
+  return `⚡【即時百家分析】
 
 目前路單：
 ${road.join(" ")}
@@ -170,9 +168,7 @@ ${road.join(" ")}
 總手數：${road.length}
 
 統計：
-莊：${r.banker}
-閒：${r.player}
-和：${r.tie}
+莊：${r.banker}閒：${r.player}和：${r.tie}
 
 目前型態：
 ${r.streak.count}連${r.streak.side || "無"}
@@ -191,19 +187,12 @@ ${r.next} ${r.color}
 信心：
 ${stars(r.conf)} ${r.conf}%
 
-建議注碼：
-${r.unit}
-
 風險：
 ${r.risk}
 
 AI判斷：
 ${r.reason}
 
-指令：
-莊 / 閒 / 和
-我的路單
-清除路單
 
 ⚠️ 僅供參考，請控制注碼。`;
 }
