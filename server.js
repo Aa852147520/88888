@@ -71,7 +71,7 @@ async function listVip(limit = 30) {
 }
 
 function startText() {
-  return `🎰【黃金右腳 AI 百家預測 V10】
+  return `🎰【黃金右腳 AI 百家預測 】
 
 請輸入路單：
 
