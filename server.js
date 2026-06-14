@@ -194,12 +194,42 @@ async function handleEvent(event, client) {
   const userId = event.source.userId || "";
   const isAdmin = ADMIN_USER_ID && userId === ADMIN_USER_ID;
 
- if (text === "開始" || text === "即時分析") {
 
-if (!vip && !isAdmin) {
-return client.replyMessage(event.replyToken, {
-type: "text",
-text: `🔒【VIP會員專屬功能】
+
+
+  if (text === "教學") {
+  const vip = await isVip(userId);
+
+  if (!vip && !isAdmin) {
+    return client.replyMessage(event.replyToken, {
+      type: "text",
+      text: needVip()
+    });
+  }
+
+  return client.replyMessage(event.replyToken, {
+    type: "text",
+    text: teachText()
+  });
+}
+
+  if (text === "加入VIP" || text === "VIP") {
+    return client.replyMessage(event.replyToken, { type: "text", text: vipInfo() });
+  }
+
+  if (text === "開通") {
+    return client.replyMessage(event.replyToken, { type: "text", text: `開通密鑰：\n${userId}` });
+  }
+
+  const vip = await isVip(userId);
+  const vipData = await getVip(userId);
+  let reply = "";
+
+  if (text === "開始" || text === "即時分析") {
+    if (!vip && !isAdmin) {
+      return client.replyMessage(event.replyToken, {
+        type: "text",
+        text: `🔒【VIP會員專屬功能】
 
 即時百家分析為 VIP 會員專屬功能。
 
@@ -218,31 +248,58 @@ VIP 解鎖：
 👑 加入VIP
 
 查看開通方案。`
-});
-}
+      });
+    }
 
-return client.replyMessage(event.replyToken, {
-type: "text",
-text: startText()
-});
-}
-
-
-  if (text === "教學") {
-    return client.replyMessage(event.replyToken, { type: "text", text: teachText() });
+    return client.replyMessage(event.replyToken, {
+      type: "text",
+      text: startText(),
+      quickReply: {
+        items: [
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "🔴 莊",
+              text: "莊"
+            }
+          },
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "🟢 和",
+              text: "和"
+            }
+          },
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "🔵 閒",
+              text: "閒"
+            }
+          },
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "📋 我的路單",
+              text: "我的路單"
+            }
+          },
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "🗑️ 清除路單",
+              text: "清除路單"
+            }
+          }
+        ]
+      }
+    });
   }
-
-  if (text === "加入VIP" || text === "VIP") {
-    return client.replyMessage(event.replyToken, { type: "text", text: vipInfo() });
-  }
-
-  if (text === "開通") {
-    return client.replyMessage(event.replyToken, { type: "text", text: `開通密鑰：\n${userId}` });
-  }
-
-  const vip = await isVip(userId);
-  const vipData = await getVip(userId);
-  let reply = "";
 
   try {
     if (text === "我的狀態") {
