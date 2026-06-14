@@ -194,9 +194,39 @@ async function handleEvent(event, client) {
   const userId = event.source.userId || "";
   const isAdmin = ADMIN_USER_ID && userId === ADMIN_USER_ID;
 
-  if (text === "開始" || text === "說明" || text.toLowerCase() === "help") {
-    return client.replyMessage(event.replyToken, { type: "text", text: startText() });
-  }
+ if (text === "開始" || text === "即時分析") {
+
+if (!vip && !isAdmin) {
+return client.replyMessage(event.replyToken, {
+type: "text",
+text: `🔒【VIP會員專屬功能】
+
+即時百家分析為 VIP 會員專屬功能。
+
+VIP 解鎖：
+
+✅ 即時百家分析
+✅ 即時信心指數
+✅ 建議注碼
+✅ 長龍／斷龍提醒
+✅ 我的路單
+✅ 清除路單
+✅ 即時盤勢分析
+
+請輸入：
+
+👑 加入VIP
+
+查看開通方案。`
+});
+}
+
+return client.replyMessage(event.replyToken, {
+type: "text",
+text: startText()
+});
+}
+
 
   if (text === "教學") {
     return client.replyMessage(event.replyToken, { type: "text", text: teachText() });
