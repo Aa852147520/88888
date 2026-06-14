@@ -111,7 +111,7 @@ function startText() {
 教學
 我的路單
 清除路單
-我的ID
+開通
 我的狀態
 加入VIP
 
@@ -206,8 +206,8 @@ async function handleEvent(event, client) {
     return client.replyMessage(event.replyToken, { type: "text", text: vipInfo() });
   }
 
-  if (text === "我的ID") {
-    return client.replyMessage(event.replyToken, { type: "text", text: `你的 LINE User ID：\n${userId}` });
+  if (text === "開通") {
+    return client.replyMessage(event.replyToken, { type: "text", text: `開通密鑰：\n${userId}` });
   }
 
   const vip = await isVip(userId);
