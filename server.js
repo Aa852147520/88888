@@ -313,17 +313,42 @@ if (text === "即時分析") {
   let reply = "";
   try {
     if (text.startsWith("開通VIP") && isAdmin) {
-      const parts = text.split(/\s+/);
-      const name = parts[1];
-      const days = Number(parts[2] || 30);
-      reply = name ? `✅ 已開通 VIP\n\n名稱：\n${name}\n\n到期日：\n${await addVip(name, days)}` : "格式：開通VIP 名稱 天數";
-    } else if (text.startsWith("取消VIP") && isAdmin) {
-      const name = text.split(/\s+/)[1];
-      if (!name) reply = "格式：取消VIP 名稱";
-      else {
-        await removeVip(name);
-        reply = `❌ 已取消 VIP\n\n名稱：\n${name}`;
-      }
+  const parts = text.split(/\s+/);
+  const name = parts[1];
+  const days = Number(parts[2] || 30);
+
+  reply = name
+    ? `✅ 已開通 VIP\n\n名稱：\n${name}\n\n到期日：\n${await addVip(name, days)}`
+    : "格式：開通VIP 名稱 天數";
+}
+
+else if (text.startsWith("取消VIP") && isAdmin) {
+  const name = text.split(/\s+/)[1];
+
+  if (!name) {
+    reply = "格式：取消VIP 名稱";
+  } else {
+    await removeVip(name);
+    reply = `❌ 已取消 VIP\n\n名稱：\n${name}`;
+  }
+}
+
+else if (text === "VIP名單" && isAdmin) {
+  const { data, error } = await supabase
+    .from("vip_users")
+    .select("display_name, expire_date, status")
+    .order("updated_at", { ascending: false })
+    .limit(30);
+
+  if (error) throw error;
+
+  reply = data.length
+    ? "👑【VIP名單】\n\n" +
+      data.map(r =>
+        `${r.status === "active" ? "✅" : "❌"} ${r.display_name}\n到期：${r.expire_date}`
+      ).join("\n\n")
+    : "目前沒有VIP資料。";
+}
     } else if (text.toUpperCase().startsWith("DG ") || text.toUpperCase().startsWith("MT ")) {
       const type = text.toUpperCase().startsWith("DG ") ? "DG" : "MT";
       if (!vip && !isAdmin) reply = needVip();
