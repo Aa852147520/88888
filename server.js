@@ -413,7 +413,7 @@ ${vipData.expire_date}`);
       : "🟦";
 reply = baccarat.livePredict(
   limited,
-  `🟥【${roomName} 即時百家分析】`
+  `${roomIcon}【${roomName} 即時百家分析】`
 );
         }
       }
