@@ -9,7 +9,6 @@ const config = {
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
   channelSecret: process.env.LINE_CHANNEL_SECRET
 };
-
 const ADMIN_USER_ID = process.env.ADMIN_USER_ID || "";
 const supabase = createClient(process.env.SUPABASE_URL || "", process.env.SUPABASE_SERVICE_ROLE_KEY || "");
 
@@ -22,78 +21,41 @@ function addDays(days) {
   const d = new Date(Date.now() + Number(days || 30) * 24 * 60 * 60 * 1000);
   return d.toISOString().slice(0, 10);
 }
-
 async function getVip(userId) {
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
-  const { data, error } = await supabase
-    .from("vip_users")
-    .select("user_id, display_name, expire_date, status")
-    .eq("user_id", userId)
-    .maybeSingle();
+  const { data, error } = await supabase.from("vip_users").select("user_id,display_name,expire_date,status").eq("user_id", userId).maybeSingle();
   if (error) return null;
   return data;
 }
-
 async function isVip(userId) {
   const data = await getVip(userId);
   if (!data || data.status !== "active") return false;
   return new Date(data.expire_date + "T23:59:59").getTime() >= Date.now();
 }
-
 async function addVip(name, days = 30) {
-
   const expireDate = addDays(days);
-
-  const { error } = await supabase
-    .from("vip_users")
-    .update({
-      status: "active",
-      expire_date: expireDate,
-      updated_at: new Date().toISOString()
-    })
-    .eq("display_name", name);
-
+  const { error } = await supabase.from("vip_users").update({
+    status: "active",
+    expire_date: expireDate,
+    updated_at: new Date().toISOString()
+  }).eq("display_name", name);
   if (error) throw error;
-
   return expireDate;
 }
 async function removeVip(name) {
-
-  const { error } = await supabase
-    .from("vip_users")
-    .update({
-      status: "inactive",
-      updated_at: new Date().toISOString()
-    })
-    .eq("display_name", name);
-
+  const { error } = await supabase.from("vip_users").update({
+    status: "inactive",
+    updated_at: new Date().toISOString()
+  }).eq("display_name", name);
   if (error) throw error;
 }
-async function listVip(limit = 30) {
-  const { data, error } = await supabase
-    .from("vip_users")
-    .select("user_id, expire_date, status, updated_at")
-    .order("updated_at", { ascending: false })
-    .limit(limit);
-  if (error) throw error;
-  return data || [];
-}
-
 function roadKey(type = "MAIN", room = "DEFAULT") {
   return `${type}_${room}`.toUpperCase();
 }
-
 async function getRoad(userId, key = "MAIN_DEFAULT") {
-  const { data, error } = await supabase
-    .from("baccarat_roads")
-    .select("road")
-    .eq("user_id", userId)
-    .eq("road_key", key)
-    .maybeSingle();
+  const { data, error } = await supabase.from("baccarat_roads").select("road").eq("user_id", userId).eq("road_key", key).maybeSingle();
   if (error || !data) return [];
   return Array.isArray(data.road) ? data.road : [];
 }
-
 async function saveRoad(userId, key, road) {
   const { error } = await supabase.from("baccarat_roads").upsert({
     user_id: userId,
@@ -103,38 +65,49 @@ async function saveRoad(userId, key, road) {
   }, { onConflict: "user_id,road_key" });
   if (error) throw error;
 }
-
 async function clearRoad(userId, key = "MAIN_DEFAULT") {
   await saveRoad(userId, key, []);
 }
-
+async function getCurrentRoom(userId) {
+  const { data, error } = await supabase.from("user_room_sessions").select("room_type,room_code").eq("user_id", userId).maybeSingle();
+  if (error || !data) return null;
+  return data;
+}
+async function setCurrentRoom(userId, type, room) {
+  const { error } = await supabase.from("user_room_sessions").upsert({
+    user_id: userId,
+    room_type: type,
+    room_code: room,
+    updated_at: new Date().toISOString()
+  }, { onConflict: "user_id" });
+  if (error) throw error;
+}
+async function clearCurrentRoom(userId) {
+  await supabase.from("user_room_sessions").delete().eq("user_id", userId);
+}
+function roomTitle(type, room) {
+  const icon = type === "DG" ? "🟥" : "🟦";
+  return `${icon}【${type} ${room} 即時百家分析】`;
+}
 function quickReply() {
-  return {
-    items: [
-      { type:"action", action:{ type:"message", label:"🔴 莊", text:"莊" }},
-      { type:"action", action:{ type:"message", label:"🟢 和", text:"和" }},
-      { type:"action", action:{ type:"message", label:"🔵 閒", text:"閒" }},
-      { type:"action", action:{ type:"message", label:"🏆 DG房號", text:"DG房號" }},
-      { type:"action", action:{ type:"message", label:"🎲 MT房號", text:"MT房號" }},
-      { type:"action", action:{ type:"message", label:"📋 我的路單", text:"我的路單" }},
-      { type:"action", action:{ type:"message", label:"📋 清除路單", text:"清除路單" }}
-    ]
-  };
+  return { items: [
+    { type:"action", action:{ type:"message", label:"🔴 莊", text:"莊" }},
+    { type:"action", action:{ type:"message", label:"🟢 和", text:"和" }},
+    { type:"action", action:{ type:"message", label:"🔵 閒", text:"閒" }},
+    { type:"action", action:{ type:"message", label:"🏆 DG房號", text:"DG房號" }},
+    { type:"action", action:{ type:"message", label:"🎲 MT房號", text:"MT房號" }},
+    { type:"action", action:{ type:"message", label:"📋 我的路單", text:"我的路單" }}
+  ]};
 }
-
 function roomQuickReply(type) {
-  return {
-    items: ROOMS[type].slice(0, 10).map(room => ({
-      type:"action",
-      action:{ type:"message", label:`${type} ${room}`, text:`${type} ${room}` }
-    }))
-  };
+  return { items: ROOMS[type].slice(0, 10).map(room => ({
+    type:"action",
+    action:{ type:"message", label:`${type} ${room}`, text:`${type} ${room}` }
+  }))};
 }
-
 function replyText(client, token, text, qr = quickReply()) {
   return client.replyMessage(token, { type:"text", text, quickReply: qr });
 }
-
 function vipInfo() {
   return `👑【VIP會員方案】
 
@@ -142,15 +115,13 @@ VIP解鎖：
 ✅ 即時百家分析
 ✅ DG房號獨立路單
 ✅ MT房號獨立路單
+✅ 自動房號模式
 ✅ 下一手建議
 ✅ 即時信心指數
-✅ 注碼建議
-✅ 長龍/斷龍提醒
 
 請聯絡客服開通🔒
 LINE:@058gvokk`;
 }
-
 function needVip() {
   return `🔒 VIP專屬功能
 
@@ -162,68 +133,44 @@ function needVip() {
 請聯絡客服開通🔒
 LINE:@058gvokk`;
 }
-
 function startText() {
-  return `🎰【黃金右腳 AI 百家分析】
+  return `🎰【黃金右腳 AI 百家分析 V14】
 
-VIP會員專屬：
+✅ 自動房號模式
 
-✅ 即時百家分析
-✅ DG房號獨立路單
-✅ MT房號獨立路單
-✅ 即時信心指數
-✅ 風險分級
-✅ 長龍／斷龍提醒
+先選房號：
+DG RB01
+MT 百家樂1
 
-一般路單：
-莊  閒  和
+選好後直接按：
+莊 / 閒 / 和
 
-DG房號：
-DG房號
-DG RB01 莊
-DG RB01 閒
-DG RB01 和
+系統會自動記錄到目前房號。
 
-MT房號：
-MT房號
-MT 百家樂1 莊
-MT 百家樂1 閒
-MT 百家樂1 和`;
-}
-
-function teachText() {
-  return `📘【DG / MT 房號即時分析教學】
-
-一般即時分析：
-莊  閒  和
-
-DG房號：
-DG房號
-DG RB01 莊
-DG RB01 閒
-DG RB01 和
-
-MT房號：
-MT房號
-MT 百家樂1 莊
-MT 百家樂1 閒
-MT 百家樂1 和
-
-查詢：
+常用指令：
+目前房號
+切換一般
 我的路單
-我的DG路單
-我的DG路單 RB01
-我的MT路單
-我的MT路單 百家樂1
-
-清除：
 清除路單
-清除DG路單
-清除DG路單 RB01
-清除MT路單
-清除MT路單 百家樂1`;
+DG房號
+MT房號`;
 }
+function teachText() {
+  return `📘【自動房號模式教學】
 
+1️⃣ 選擇房號
+DG RB01
+MT 百家樂1
+
+2️⃣ 選好後直接輸入
+莊 / 閒 / 和
+
+3️⃣ 查目前房號
+目前房號
+
+4️⃣ 回一般路單
+切換一般`;
+}
 function roomText(type) {
   const title = type === "DG" ? "🏆【DG 真人百家房號】" : "🎲【MT 真人百家房號】";
   return `${title}
@@ -233,36 +180,25 @@ function roomText(type) {
 ${ROOMS[type].map(r => `🔴 ${r}`).join("\n")}
 
 使用方式：
-${type} ${ROOMS[type][0]} 莊
-${type} ${ROOMS[type][0]} 閒
-${type} ${ROOMS[type][0]} 和
+${type} ${ROOMS[type][0]}
 
-查詢：
-我的${type}路單
-我的${type}路單 ${ROOMS[type][0]}
-
-清除：
-清除${type}路單
-清除${type}路單 ${ROOMS[type][0]}
-
-每個房號皆為獨立路單與獨立AI分析。`;
+選好房號後，直接按：
+莊 / 閒 / 和`;
 }
-
 function parseRoom(text, type) {
   const parts = text.trim().replace(/\s+/g, " ").split(" ");
   if (parts[0].toUpperCase() !== type) return null;
-  const room = (parts[1] || "").toUpperCase();
+  const input = parts[1] || "";
+  const room = ROOMS[type].find(r => r.toUpperCase() === input.toUpperCase() || r === input);
   const value = parts[2] === "庄" ? "莊" : parts[2];
-
-  if (!room || !ROOMS[type].includes(room)) return { error:`房號不存在，請輸入：${type}房號`, room };
+  if (!room) return { error:`房號不存在，請輸入：${type}房號` };
   if (!value) return { room };
-  if (!["莊","閒","和"].includes(value)) return { error:`請輸入 ${type} ${ROOMS[type][0]} 莊  閒  和`, room };
+  if (!["莊","閒","和"].includes(value)) return { error:`請輸入 ${type} ${ROOMS[type][0]} 莊 / 閒 / 和`, room };
   return { room, value };
 }
 
-app.get("/", (req, res) => res.send("LINE Baccarat Bot V13 DG MT Room is running. Webhook: /webhook"));
-app.get("/health", (req, res) => res.json({ ok:true, version:"v13-dg-mt-room" }));
-
+app.get("/", (req, res) => res.send("LINE Baccarat Bot V14 Auto Room is running"));
+app.get("/health", (req, res) => res.json({ ok:true, version:"v14-auto-room" }));
 app.post("/webhook", line.middleware(config), async (req, res) => {
   try {
     const client = new line.Client(config);
@@ -276,30 +212,22 @@ app.post("/webhook", line.middleware(config), async (req, res) => {
 
 async function handleEvent(event, client) {
   if (event.type !== "message" || event.message.type !== "text") return;
-
   const text = event.message.text.trim();
   const userId = event.source.userId || "";
   const isAdmin = ADMIN_USER_ID && userId === ADMIN_USER_ID;
 
   if (text === "加入VIP" || text === "VIP") return replyText(client, event.replyToken, vipInfo());
 
- if (text === "開通") {
-
-  const profile = await client.getProfile(userId);
-
-  await supabase.from("vip_users").upsert({
-    user_id: userId,
-    display_name: profile.displayName,
-    status: "inactive",
-    expire_date: "2099-12-31",
-    updated_at: new Date().toISOString()
-  }, {
-    onConflict: "user_id"
-  });
-
-  return client.replyMessage(event.replyToken, {
-    type: "text",
-    text: `🔑【VIP開通資料】
+  if (text === "開通") {
+    const profile = await client.getProfile(userId);
+    await supabase.from("vip_users").upsert({
+      user_id: userId,
+      display_name: profile.displayName,
+      status: "inactive",
+      expire_date: "2099-12-31",
+      updated_at: new Date().toISOString()
+    }, { onConflict: "user_id" });
+    return replyText(client, event.replyToken, `🔑【VIP開通資料】
 
 名稱：
 ${profile.displayName}
@@ -307,18 +235,16 @@ ${profile.displayName}
 請截圖此畫面給客服開通即可。
 
 LINE：
-@058gvokk`
-  });
-
-}
+@058gvokk`);
+  }
 
   if (text === "我的狀態") {
-  const vip = await isVip(userId);
-  const vipData = await getVip(userId);
-  const profile = await client.getProfile(userId);
+    const vip = await isVip(userId);
+    const vipData = await getVip(userId);
+    const profile = await client.getProfile(userId);
 
- if (!vip || !vipData) {
-  return replyText(client, event.replyToken, `💎【VIP會員狀態】
+    if (!vip || !vipData) {
+      return replyText(client, event.replyToken, `💎【VIP會員狀態】
 
 名稱：
 ${profile.displayName}
@@ -330,20 +256,12 @@ ${profile.displayName}
 0 天
 
 到期日：
-無
-
-請輸入：
-加入VIP`);
-}
-
-  const today = new Date();
-  const expire = new Date(vipData.expire_date + "T23:59:59");
-  const leftDays = Math.max(
-    0,
-    Math.ceil((expire.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-  );
-
- return replyText(client, event.replyToken, `💎【VIP會員】
+無`);
+    }
+    const today = new Date();
+    const expire = new Date(vipData.expire_date + "T23:59:59");
+    const leftDays = Math.max(0, Math.ceil((expire.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
+    return replyText(client, event.replyToken, `💎【VIP會員】
 
 名稱：
 ${profile.displayName}
@@ -356,225 +274,102 @@ ${leftDays} 天
 
 到期日：
 ${vipData.expire_date}`);
-}
+  }
 
   const vip = await isVip(userId);
-
-  if (text === "開始" || text === "即時分析") {
+  if (["開始","即時分析"].includes(text)) {
     if (!vip && !isAdmin) return replyText(client, event.replyToken, needVip());
     return replyText(client, event.replyToken, startText());
   }
-
   if (text === "教學") {
     if (!vip && !isAdmin) return replyText(client, event.replyToken, needVip());
     return replyText(client, event.replyToken, teachText());
   }
-
   if (text === "DG房號") {
     if (!vip && !isAdmin) return replyText(client, event.replyToken, needVip());
     return replyText(client, event.replyToken, roomText("DG"), roomQuickReply("DG"));
   }
-
   if (text === "MT房號") {
     if (!vip && !isAdmin) return replyText(client, event.replyToken, needVip());
     return replyText(client, event.replyToken, roomText("MT"), roomQuickReply("MT"));
   }
-
- let reply = "";
-
-try {
-
-  if (text.startsWith("開通VIP") && isAdmin) {
-
-    const parts = text.split(/\s+/);
-
-    const targetName = parts[1];
-
-    const days = Number(parts[2] || 30);
-
-    if (!targetName) {
-
-      reply = `格式：
-
-開通VIP 名稱 天數`;
-
-    } else {
-
-      const expireDate = await addVip(targetName, days);
-
-      reply = `✅ 已開通 VIP
-
-名稱：
-${targetName}
-
-到期日：
-${expireDate}`;
-
-    }
-
+  if (text === "目前房號") {
+    if (!vip && !isAdmin) return replyText(client, event.replyToken, needVip());
+    const cur = await getCurrentRoom(userId);
+    if (!cur) return replyText(client, event.replyToken, "目前使用：一般路單\n\n可輸入：DG RB01 或 MT 百家樂1");
+    return replyText(client, event.replyToken, `目前房號：\n${cur.room_type} ${cur.room_code}\n\n之後直接按：莊 / 閒 / 和`);
+  }
+  if (text === "切換一般") {
+    if (!vip && !isAdmin) return replyText(client, event.replyToken, needVip());
+    await clearCurrentRoom(userId);
+    return replyText(client, event.replyToken, "✅ 已切換回一般路單");
   }
 
-    else if (text.startsWith("取消VIP") && isAdmin) {
-
-  const targetName = text.split(/\s+/)[1];
-
-  if (!targetName) {
-
-    reply = `格式：
-
-取消VIP 名稱`;
-
-  } else {
-
-    await removeVip(targetName);
-
-    reply = `❌ 已取消 VIP
-
-名稱：
-${targetName}`;
-
-  }
-
-}
-
-    else if (text === "VIP名單" && isAdmin) {
-      const rows = await listVip();
-      reply = rows.length
-        ? "【VIP名單】\n" + rows.map(r => `${r.status === "active" ? "✅" : "❌"} ${r.user_id}\n到期：${r.expire_date}`).join("\n\n")
-        : "目前沒有VIP資料。";
-    }
-
-    else if (text.toUpperCase().startsWith("DG ") || text.toUpperCase().startsWith("MT ")) {
+  let reply = "";
+  try {
+    if (text.startsWith("開通VIP") && isAdmin) {
+      const parts = text.split(/\s+/);
+      const name = parts[1];
+      const days = Number(parts[2] || 30);
+      reply = name ? `✅ 已開通 VIP\n\n名稱：\n${name}\n\n到期日：\n${await addVip(name, days)}` : "格式：開通VIP 名稱 天數";
+    } else if (text.startsWith("取消VIP") && isAdmin) {
+      const name = text.split(/\s+/)[1];
+      if (!name) reply = "格式：取消VIP 名稱";
+      else {
+        await removeVip(name);
+        reply = `❌ 已取消 VIP\n\n名稱：\n${name}`;
+      }
+    } else if (text.toUpperCase().startsWith("DG ") || text.toUpperCase().startsWith("MT ")) {
       const type = text.toUpperCase().startsWith("DG ") ? "DG" : "MT";
       if (!vip && !isAdmin) reply = needVip();
       else {
         const p = parseRoom(text, type);
-        if (!p || p.error) reply = p?.error || `格式：${type} ${ROOMS[type][0]} 莊 / 閒 / 和`;
+        if (!p || p.error) reply = p?.error || "格式錯誤";
         else if (!p.value) {
+          await setCurrentRoom(userId, type, p.room);
           const road = await getRoad(userId, roadKey(type, p.room));
-          reply = road.length
-            ? `${type === "DG" ? "🏆" : "🎲"}【${type} ${p.room} 路單】\n\n${road.join(" ")}\n\n總手數：${road.length}`
-            : `${type} ${p.room} 目前沒有路單。\n請輸入：${type} ${p.room} 莊  閒  和`;
+          reply = `✅ 已切換房號\n\n目前房號：\n${type} ${p.room}\n\n目前路單：\n${road.length ? road.join(" ") : "尚未建立"}\n\n之後直接按：莊 / 閒 / 和`;
         } else {
           const key = roadKey(type, p.room);
           const road = await getRoad(userId, key);
           road.push(p.value);
           const limited = road.slice(-80);
           await saveRoad(userId, key, limited);
-
-  // 房號名稱
-  const roomName =
-    type === "DG"
-      ? `RB${p.room.slice(1)}`
-      : `MB${p.room.slice(1)}`;
-
-  // 房號顏色
-  const roomIcon =
-    type === "DG"
-      ? "🟥"
-      : "🟦";
-reply = baccarat.livePredict(
-  limited,
-  `${roomIcon}【${roomName} 即時百家分析】`
-);
+          await setCurrentRoom(userId, type, p.room);
+          reply = baccarat.livePredict(limited, roomTitle(type, p.room));
         }
       }
-    }
-
-    else if (text === "我的DG路單" || text === "我的MT路單") {
-      const type = text.startsWith("我的DG") ? "DG" : "MT";
+    } else if (text === "我的路單") {
       if (!vip && !isAdmin) reply = needVip();
       else {
-        const lines = [];
-        for (const room of ROOMS[type]) {
-          const road = await getRoad(userId, roadKey(type, room));
-          if (road.length) lines.push(`${type} ${room}：${road.join(" ")}（${road.length}手）`);
-        }
-        reply = lines.length ? `${type === "DG" ? "🏆" : "🎲"}【我的${type}路單】\n\n${lines.join("\n\n")}` : `目前沒有${type}路單。\n請輸入：${type}房號`;
+        const cur = await getCurrentRoom(userId);
+        const key = cur ? roadKey(cur.room_type, cur.room_code) : roadKey("MAIN","DEFAULT");
+        const road = await getRoad(userId, key);
+        const title = cur ? `${cur.room_type} ${cur.room_code}` : "一般路單";
+        reply = road.length ? `📋【${title}】\n\n${road.join(" ")}\n\n總手數：${road.length}` : `${title} 目前沒有路單。`;
       }
-    }
-
-    else if (text.startsWith("我的DG路單 ") || text.startsWith("我的MT路單 ")) {
-      const type = text.startsWith("我的DG") ? "DG" : "MT";
+    } else if (text === "清除路單") {
       if (!vip && !isAdmin) reply = needVip();
       else {
-        const room = text.split(/\s+/)[1]?.toUpperCase();
-        if (!ROOMS[type].includes(room)) reply = `房號不存在，請輸入：${type}房號`;
-        else {
-          const road = await getRoad(userId, roadKey(type, room));
-          reply = road.length ? `${type === "DG" ? "🏆" : "🎲"}【${type} ${room} 路單】\n\n${road.join(" ")}\n\n總手數：${road.length}` : `${type} ${room} 目前沒有路單。`;
-        }
+        const cur = await getCurrentRoom(userId);
+        const key = cur ? roadKey(cur.room_type, cur.room_code) : roadKey("MAIN","DEFAULT");
+        await clearRoad(userId, key);
+        reply = cur ? `✅ 已清除目前房號路單\n\n${cur.room_type} ${cur.room_code}` : "✅ 已清除一般路單";
       }
-    }
-
-    else if (text === "清除DG路單" || text === "清除MT路單") {
-      const type = text.includes("DG") ? "DG" : "MT";
-      if (!vip && !isAdmin) reply = needVip();
-      else {
-        for (const room of ROOMS[type]) await clearRoad(userId, roadKey(type, room));
-        reply = `✅ 已清除全部 ${type} 房號路單。`;
-      }
-    }
-
-    else if (text.startsWith("清除DG路單 ") || text.startsWith("清除MT路單 ")) {
-      const type = text.startsWith("清除DG") ? "DG" : "MT";
-      if (!vip && !isAdmin) reply = needVip();
-      else {
-        const room = text.split(/\s+/)[1]?.toUpperCase();
-        if (!ROOMS[type].includes(room)) reply = `房號不存在，請輸入：${type}房號`;
-        else {
-          await clearRoad(userId, roadKey(type, room));
-          reply = `✅ 已清除 ${type} ${room} 路單。`;
-        }
-      }
-    }
-
-    else if (text === "清除路單") {
-      if (!vip && !isAdmin) reply = needVip();
-      else {
-        await clearRoad(userId, roadKey("MAIN", "DEFAULT"));
-        reply = "✅ 已清除你的一般百家路單。\n\n請開始輸入：莊  閒  和";
-      }
-    }
-
-    else if (text === "我的路單") {
-      if (!vip && !isAdmin) reply = needVip();
-      else {
-        const road = await getRoad(userId, roadKey("MAIN", "DEFAULT"));
-        reply = road.length ? `🎰【你的一般路單】\n\n${road.join(" ")}\n\n總手數：${road.length}` : "目前沒有一般路單。\n請輸入：莊  閒  和";
-      }
-    }
-
-    else if (["莊","閒","和","庄"].includes(text)) {
+    } else if (["莊","閒","和","庄"].includes(text)) {
       if (!vip && !isAdmin) reply = needVip();
       else {
         const value = text === "庄" ? "莊" : text;
-        const key = roadKey("MAIN", "DEFAULT");
+        const cur = await getCurrentRoom(userId);
+        const key = cur ? roadKey(cur.room_type, cur.room_code) : roadKey("MAIN","DEFAULT");
         const road = await getRoad(userId, key);
         road.push(value);
         const limited = road.slice(-80);
         await saveRoad(userId, key, limited);
-        reply = baccarat.livePredict(limited);
+        reply = cur ? baccarat.livePredict(limited, roomTitle(cur.room_type, cur.room_code)) : baccarat.livePredict(limited);
       }
-    }
-
-    else if (text.includes("莊") || text.includes("閒") || text.startsWith("百家預測")) {
-      if (!vip && !isAdmin) reply = needVip();
-      else reply = baccarat.predict(text.replace("百家預測", "").trim());
-    }
-
-    else {
-      reply = `收到：「${text}」
-
-請輸入：
-開始
-DG房號
-MT房號
-DG RB01 莊
-MT 百家樂1 莊
-我的DG路單
-我的MT路單
-加入VIP`;
+    } else {
+      reply = `收到：「${text}」\n\n請輸入：\n開始\nDG RB01\nMT 百家樂1\n目前房號\n切換一般`;
     }
   } catch (err) {
     console.error("Command error:", err);
@@ -583,5 +378,4 @@ MT 百家樂1 莊
 
   return replyText(client, event.replyToken, reply);
 }
-
-app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Baccarat Bot V13 DG MT Room running"));
+app.listen(process.env.PORT || 3000, () => console.log("✅ LINE Baccarat Bot V14 Auto Room running"));

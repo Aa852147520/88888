@@ -1,6 +1,6 @@
 {
-  "name": "line-baccarat-bot-v13-dg-mt-room",
-  "version": "13.0.0",
+  "name": "line-baccarat-bot-v14-auto-room",
+  "version": "14.0.0",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

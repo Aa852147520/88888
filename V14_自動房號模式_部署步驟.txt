@@ -1,0 +1,23 @@
+V14 自動房號模式部署步驟
+
+1. 上傳 server.js、baccarat-ai.js、package.json
+2. Supabase → SQL Editor → 執行 supabase-schema.sql
+3. Render → Manual Deploy → Deploy Latest Commit
+
+測試：
+DG RB01
+莊
+莊
+閒
+
+會顯示：
+🟥【DG RB01 即時百家分析】
+
+MT：
+MT 百家樂1
+莊
+閒
+和
+
+回一般路單：
+切換一般
