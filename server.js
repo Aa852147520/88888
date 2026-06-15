@@ -134,7 +134,7 @@ function needVip() {
 LINE:@058gvokk`;
 }
 function startText() {
-  return `🎰【黃金右腳 AI 百家分析 V14】
+  return `🎰【黃金右腳 AI 百家分析】
 
 ✅ 自動房號模式
 
@@ -143,7 +143,7 @@ DG RB01
 MT 百家樂1
 
 選好後直接按：
-莊 / 閒 / 和
+莊  閒  和
 
 系統會自動記錄到目前房號。
 
@@ -183,7 +183,7 @@ ${ROOMS[type].map(r => `🔴 ${r}`).join("\n")}
 ${type} ${ROOMS[type][0]}
 
 選好房號後，直接按：
-莊 / 閒 / 和`;
+莊  閒  和`;
 }
 function parseRoom(text, type) {
   const parts = text.trim().replace(/\s+/g, " ").split(" ");
@@ -193,7 +193,7 @@ function parseRoom(text, type) {
   const value = parts[2] === "庄" ? "莊" : parts[2];
   if (!room) return { error:`房號不存在，請輸入：${type}房號` };
   if (!value) return { room };
-  if (!["莊","閒","和"].includes(value)) return { error:`請輸入 ${type} ${ROOMS[type][0]} 莊 / 閒 / 和`, room };
+  if (!["莊","閒","和"].includes(value)) return { error:`請輸入 ${type} ${ROOMS[type][0]} 莊  閒  和`, room };
   return { room, value };
 }
 
