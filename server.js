@@ -276,17 +276,33 @@ async function handleEvent(event, client) {
   if (text === "加入VIP" || text === "VIP") return replyText(client, event.replyToken, vipInfo());
 
   if (text === "開通") {
-    const profile = await client.getProfile(userId);
-    return replyText(client, event.replyToken, `🔑【VIP開通資料】
+
+  const profile = await client.getProfile(userId);
+
+  await supabase.from("vip_users").upsert({
+    user_id: userId,
+    display_name: profile.displayName,
+    status: "inactive",
+    expire_date: addDays(0),
+    updated_at: new Date().toISOString()
+  }, {
+    onConflict: "user_id"
+  });
+
+  return client.replyMessage(event.replyToken, {
+    type: "text",
+    text: `🔑【VIP開通資料】
 
 名稱：
 ${profile.displayName}
 
-請將此畫面截圖傳給客服開通。
+請截圖此畫面給客服開通即可。
 
 LINE：
-@058gvokk`);
-  }
+@058gvokk`
+  });
+
+}
 
   if (text === "我的狀態") {
   const vip = await isVip(userId);
