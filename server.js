@@ -57,14 +57,18 @@ async function addVip(name, days = 30) {
 
   return expireDate;
 }
-async function removeVip(userId) {
+async function removeVip(name) {
+
   const { error } = await supabase
     .from("vip_users")
-    .update({ status: "inactive", updated_at: new Date().toISOString() })
-    .eq("user_id", userId);
+    .update({
+      status: "inactive",
+      updated_at: new Date().toISOString()
+    })
+    .eq("display_name", name);
+
   if (error) throw error;
 }
-
 async function listVip(limit = 30) {
   const { data, error } = await supabase
     .from("vip_users")
@@ -411,13 +415,27 @@ ${expireDate}`;
   }
 
     else if (text.startsWith("取消VIP") && isAdmin) {
-      const target = text.split(/\s+/)[1];
-      if (!target) reply = "格式：取消VIP LINE_USER_ID";
-      else {
-        await removeVip(target);
-        reply = `已取消 VIP：${target}`;
-      }
-    }
+
+  const targetName = text.split(/\s+/)[1];
+
+  if (!targetName) {
+
+    reply = `格式：
+
+取消VIP 名稱`;
+
+  } else {
+
+    await removeVip(targetName);
+
+    reply = `❌ 已取消 VIP
+
+名稱：
+${targetName}`;
+
+  }
+
+}
 
     else if (text === "VIP名單" && isAdmin) {
       const rows = await listVip();
