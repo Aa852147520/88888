@@ -14,8 +14,8 @@ const ADMIN_USER_ID = process.env.ADMIN_USER_ID || "";
 const supabase = createClient(process.env.SUPABASE_URL || "", process.env.SUPABASE_SERVICE_ROLE_KEY || "");
 
 const ROOMS = {
-  DG: ["A01","A02","A03","A05","A08","B01","B02","B03","C01","C02"],
-  MT: ["B01","B02","B03","B05","B08","C01","C02","C03","D01","D02"]
+  DG: ["RB01","RB02","RB03","RB04","RB05","RB06","RB07","S01","S02","S03","S04","S05","S06","S07"],
+  MT: ["百家樂1","百家樂2","百家樂3","百家樂3A","百家樂5","百家樂6","百家樂7","百家樂8","百家樂9","百家樂10","百家樂11","百家樂12","百家樂13","百家樂13A","百家樂15"]
 };
 
 function addDays(days) {
@@ -155,7 +155,7 @@ LINE:@058gvokk`;
 }
 
 function startText() {
-  return `🎰【黃金右腳 AI 百家分析 V13】
+  return `🎰【黃金右腳 AI 百家分析】
 
 VIP會員專屬：
 
@@ -171,15 +171,15 @@ VIP會員專屬：
 
 DG房號：
 DG房號
-DG A01 莊
-DG A01 閒
-DG A01 和
+DG RB01 莊
+DG RB01 閒
+DG RB01 和
 
 MT房號：
 MT房號
-MT B01 莊
-MT B01 閒
-MT B01 和`;
+MT 百家樂1 莊
+MT 百家樂1 閒
+MT 百家樂1 和`;
 }
 
 function teachText() {
@@ -190,29 +190,29 @@ function teachText() {
 
 DG房號：
 DG房號
-DG A01 莊
-DG A01 閒
-DG A01 和
+DG RB01 莊
+DG RB01 閒
+DG RB01 和
 
 MT房號：
 MT房號
-MT B01 莊
-MT B01 閒
-MT B01 和
+MT 百家樂1 莊
+MT 百家樂1 閒
+MT 百家樂1 和
 
 查詢：
 我的路單
 我的DG路單
-我的DG路單 A01
+我的DG路單 RB01
 我的MT路單
-我的MT路單 B01
+我的MT路單 百家樂1
 
 清除：
 清除路單
 清除DG路單
-清除DG路單 A01
+清除DG路單 RB01
 清除MT路單
-清除MT路單 B01`;
+清除MT路單 百家樂1`;
 }
 
 function roomText(type) {
@@ -453,7 +453,7 @@ LINE：
 開始
 DG房號
 MT房號
-DG A01 莊
+DG RB01 莊
 MT B01 莊
 我的DG路單
 我的MT路單
