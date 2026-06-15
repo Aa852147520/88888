@@ -96,7 +96,8 @@ function quickReply() {
     { type:"action", action:{ type:"message", label:"🔵 閒", text:"閒" }},
     { type:"action", action:{ type:"message", label:"🏆 DG房號", text:"DG房號" }},
     { type:"action", action:{ type:"message", label:"🎲 MT房號", text:"MT房號" }},
-    { type:"action", action:{ type:"message", label:"📋 我的路單", text:"我的路單" }}
+    { type:"action", action:{ type:"message", label:"📋 我的路單", text:"我的路單" }},
+    { type:"action", action:{ type:"message", label:"📋 清除路單", text:"清除路單" }}
   ]};
 }
 function roomQuickReply(type) {
