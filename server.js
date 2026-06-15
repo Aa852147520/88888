@@ -360,7 +360,22 @@ LINE：
           road.push(p.value);
           const limited = road.slice(-80);
           await saveRoad(userId, key, limited);
-          reply = baccarat.livePredict(limited, `${type === "DG" ? "🏆" : "🎲"}【${type} ${p.room} 即時百家分析】`);
+
+  // 房號名稱
+  const roomName =
+    type === "DG"
+      ? `RB${p.room.slice(1)}`
+      : `MB${p.room.slice(1)}`;
+
+  // 房號顏色
+  const roomIcon =
+    type === "DG"
+      ? "🟥"
+      : "🟦";
+reply = baccarat.livePredict(
+  limited,
+  `🟥【${roomName} 即時百家分析】`
+);
         }
       }
     }
