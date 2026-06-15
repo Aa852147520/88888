@@ -108,7 +108,8 @@ function quickReply() {
       { type:"action", action:{ type:"message", label:"🔵 閒", text:"閒" }},
       { type:"action", action:{ type:"message", label:"🏆 DG房號", text:"DG房號" }},
       { type:"action", action:{ type:"message", label:"🎲 MT房號", text:"MT房號" }},
-      { type:"action", action:{ type:"message", label:"📋 我的路單", text:"我的路單" }}
+      { type:"action", action:{ type:"message", label:"📋 我的路單", text:"我的路單" }},
+      { type:"action", action:{ type:"message", label:"📋 清除路單", text:"清除路單" }}
     ]
   };
 }
@@ -186,7 +187,7 @@ function teachText() {
   return `📘【DG / MT 房號即時分析教學】
 
 一般即時分析：
-莊 / 閒 / 和
+莊  閒  和
 
 DG房號：
 DG房號
@@ -454,7 +455,7 @@ LINE：
 DG房號
 MT房號
 DG RB01 莊
-MT B01 莊
+MT 百家樂1 莊
 我的DG路單
 我的MT路單
 加入VIP`;
