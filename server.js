@@ -293,18 +293,24 @@ LINE：
   const vipData = await getVip(userId);
   const profile = await client.getProfile(userId);
 
-  if (!vip || !vipData) {
-    return replyText(client, event.replyToken, `💎【VIP會員狀態】
+ if (!vip || !vipData) {
+  return replyText(client, event.replyToken, `💎【VIP會員狀態】
 
 名稱：
 ${profile.displayName}
 
-狀態：
-尚未開通 VIP
+會員等級：
+未開通
+
+剩餘天數：
+0 天
+
+到期日：
+無
 
 請輸入：
 加入VIP`);
-  }
+}
 
   const today = new Date();
   const expire = new Date(vipData.expire_date + "T23:59:59");
