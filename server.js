@@ -277,12 +277,13 @@ ${leftDays} 天
 ${vipData.expire_date}`);
   }
 
-  const vip = await isVip(userId);
   if (text === "開始") {
   return replyText(client, event.replyToken, startText());
 }
+  
+const vip = await isVip(userId);
 
-if (text === "即時分析") {
+  if (text === "即時分析") {
   if (!vip && !isAdmin) return replyText(client, event.replyToken, needVip());
   return replyText(client, event.replyToken, startText());
 }
