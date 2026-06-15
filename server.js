@@ -533,7 +533,7 @@ reply = baccarat.livePredict(
       if (!vip && !isAdmin) reply = needVip();
       else {
         await clearRoad(userId, roadKey("MAIN", "DEFAULT"));
-        reply = "✅ 已清除你的一般百家路單。\n\n請開始輸入：莊 / 閒 / 和";
+        reply = "✅ 已清除你的一般百家路單。\n\n請開始輸入：莊  閒  和";
       }
     }
 
