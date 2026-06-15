@@ -278,10 +278,14 @@ ${vipData.expire_date}`);
   }
 
   const vip = await isVip(userId);
-  if (["開始","即時分析"].includes(text)) {
-    if (!vip && !isAdmin) return replyText(client, event.replyToken, needVip());
-    return replyText(client, event.replyToken, startText());
-  }
+  if (text === "開始") {
+  return replyText(client, event.replyToken, startText());
+}
+
+if (text === "即時分析") {
+  if (!vip && !isAdmin) return replyText(client, event.replyToken, needVip());
+  return replyText(client, event.replyToken, startText());
+}
   if (text === "教學") {
     if (!vip && !isAdmin) return replyText(client, event.replyToken, needVip());
     return replyText(client, event.replyToken, teachText());
