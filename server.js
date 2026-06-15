@@ -40,19 +40,23 @@ async function isVip(userId) {
   return new Date(data.expire_date + "T23:59:59").getTime() >= Date.now();
 }
 
-async function addVip(userId, days = 30) {
+async function addVip(name, days = 30) {
+
   const expireDate = addDays(days);
-  const { error } = await supabase.from("vip_users").upsert({
-    user_id: userId,
-    expire_date: expireDate,
-    status: "active",
-    note: "manual",
-    updated_at: new Date().toISOString()
-  }, { onConflict: "user_id" });
+
+  const { error } = await supabase
+    .from("vip_users")
+    .update({
+      status: "active",
+      expire_date: expireDate,
+      updated_at: new Date().toISOString()
+    })
+    .eq("display_name", name);
+
   if (error) throw error;
+
   return expireDate;
 }
-
 async function removeVip(userId) {
   const { error } = await supabase
     .from("vip_users")
@@ -275,7 +279,7 @@ async function handleEvent(event, client) {
 
   if (text === "加入VIP" || text === "VIP") return replyText(client, event.replyToken, vipInfo());
 
-  if (text === "開通") {
+ if (text === "開通") {
 
   const profile = await client.getProfile(userId);
 
@@ -283,7 +287,7 @@ async function handleEvent(event, client) {
     user_id: userId,
     display_name: profile.displayName,
     status: "inactive",
-    expire_date: addDays(0),
+    expire_date: "2099-12-31",
     updated_at: new Date().toISOString()
   }, {
     onConflict: "user_id"
@@ -372,15 +376,39 @@ ${vipData.expire_date}`);
     return replyText(client, event.replyToken, roomText("MT"), roomQuickReply("MT"));
   }
 
-  let reply = "";
+ let reply = "";
 
-  try {
-    if (text.startsWith("開通VIP") && isAdmin) {
-      const parts = text.split(/\s+/);
-      const target = parts[1];
-      const days = Number(parts[2] || 30);
-      reply = target ? `已開通 VIP ✅\nUser ID：${target}\n到期日：${await addVip(target, days)}` : "格式：開通VIP LINE_USER_ID 天數";
+try {
+
+  if (text.startsWith("開通VIP") && isAdmin) {
+
+    const parts = text.split(/\s+/);
+
+    const targetName = parts[1];
+
+    const days = Number(parts[2] || 30);
+
+    if (!targetName) {
+
+      reply = `格式：
+
+開通VIP 名稱 天數`;
+
+    } else {
+
+      const expireDate = await addVip(targetName, days);
+
+      reply = `✅ 已開通 VIP
+
+名稱：
+${targetName}
+
+到期日：
+${expireDate}`;
+
     }
+
+  }
 
     else if (text.startsWith("取消VIP") && isAdmin) {
       const target = text.split(/\s+/)[1];
