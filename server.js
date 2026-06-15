@@ -289,11 +289,41 @@ LINE：
   }
 
   if (text === "我的狀態") {
-    const vip = await isVip(userId);
-    const vipData = await getVip(userId);
-    return replyText(client, event.replyToken, vip ? `你目前是 VIP 會員 ✅
-到期日：${vipData.expire_date}` : "你目前不是 VIP 會員。\n輸入「加入VIP」查看方案。");
+  const vip = await isVip(userId);
+  const vipData = await getVip(userId);
+  const profile = await client.getProfile(userId);
+
+  if (!vip || !vipData) {
+    return replyText(client, event.replyToken, `💎【VIP會員狀態】
+
+名稱：
+${profile.displayName}
+
+狀態：
+尚未開通 VIP
+
+請輸入：
+加入VIP`);
   }
+
+  const today = new Date();
+  const expire = new Date(vipData.expire_date + "T23:59:59");
+  const leftDays = Math.max(
+    0,
+    Math.ceil((expire.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+  );
+
+  return replyText(client, event.replyToken, `💎【VIP會員】
+
+名稱：
+${profile.displayName}
+
+剩餘天數：
+${leftDays} 天
+
+到期日：
+${vipData.expire_date}`);
+}
 
   const vip = await isVip(userId);
 
