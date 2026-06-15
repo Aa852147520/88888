@@ -348,7 +348,8 @@ else if (text === "VIP名單" && isAdmin) {
         `${r.status === "active" ? "✅" : "❌"} ${r.display_name}\n到期：${r.expire_date}`
       ).join("\n\n")
     : "目前沒有VIP資料。";
-    } else if (text.toUpperCase().startsWith("DG ") || text.toUpperCase().startsWith("MT ")) {
+    } 
+     else if (text.toUpperCase().startsWith("DG ") || text.toUpperCase().startsWith("MT ")) {
       const type = text.toUpperCase().startsWith("DG ") ? "DG" : "MT";
       if (!vip && !isAdmin) reply = needVip();
       else {
