@@ -541,7 +541,7 @@ reply = baccarat.livePredict(
       if (!vip && !isAdmin) reply = needVip();
       else {
         const road = await getRoad(userId, roadKey("MAIN", "DEFAULT"));
-        reply = road.length ? `🎰【你的一般路單】\n\n${road.join(" ")}\n\n總手數：${road.length}` : "目前沒有一般路單。\n請輸入：莊 / 閒 / 和";
+        reply = road.length ? `🎰【你的一般路單】\n\n${road.join(" ")}\n\n總手數：${road.length}` : "目前沒有一般路單。\n請輸入：莊  閒  和";
       }
     }
 
