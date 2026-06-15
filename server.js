@@ -248,7 +248,7 @@ function parseRoom(text, type) {
 
   if (!room || !ROOMS[type].includes(room)) return { error:`房號不存在，請輸入：${type}房號`, room };
   if (!value) return { room };
-  if (!["莊","閒","和"].includes(value)) return { error:`請輸入 ${type} ${ROOMS[type][0]} 莊 / 閒 / 和`, room };
+  if (!["莊","閒","和"].includes(value)) return { error:`請輸入 ${type} ${ROOMS[type][0]} 莊  閒  和`, room };
   return { room, value };
 }
 
@@ -353,7 +353,7 @@ LINE：
           const road = await getRoad(userId, roadKey(type, p.room));
           reply = road.length
             ? `${type === "DG" ? "🏆" : "🎲"}【${type} ${p.room} 路單】\n\n${road.join(" ")}\n\n總手數：${road.length}`
-            : `${type} ${p.room} 目前沒有路單。\n請輸入：${type} ${p.room} 莊 / 閒 / 和`;
+            : `${type} ${p.room} 目前沒有路單。\n請輸入：${type} ${p.room} 莊  閒  和`;
         } else {
           const key = roadKey(type, p.room);
           const road = await getRoad(userId, key);
