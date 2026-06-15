@@ -1,0 +1,19 @@
+LINE 百家預測機器人 V13 DG+MT房號版 部署步驟
+
+1. 解壓縮 line-baccarat-bot-v13-dg-mt-room.zip
+2. GitHub 原本專案刪除舊檔案
+3. 上傳 V13 全部檔案
+4. Commit changes
+5. Supabase → SQL Editor 執行 supabase-schema.sql
+6. Render → Manual Deploy → Deploy Latest Commit
+
+測試：
+開始
+DG房號
+MT房號
+DG A01 莊
+MT B01 莊
+我的DG路單
+我的MT路單
+清除DG路單 A01
+清除MT路單 B01
