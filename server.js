@@ -313,10 +313,13 @@ ${profile.displayName}
     Math.ceil((expire.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
   );
 
-  return replyText(client, event.replyToken, `💎【VIP會員】
+ return replyText(client, event.replyToken, `💎【VIP會員】
 
 名稱：
 ${profile.displayName}
+
+會員等級：
+VIP會員
 
 剩餘天數：
 ${leftDays} 天
