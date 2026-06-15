@@ -27,7 +27,7 @@ async function getVip(userId) {
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
   const { data, error } = await supabase
     .from("vip_users")
-    .select("user_id, expire_date, status")
+    .select("user_id, display_name, expire_date, status")
     .eq("user_id", userId)
     .maybeSingle();
   if (error) return null;
