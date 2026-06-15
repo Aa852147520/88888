@@ -163,7 +163,7 @@ DG RB01
 MT 百家樂1
 
 2️⃣ 選好後直接輸入
-莊 / 閒 / 和
+莊  閒  和
 
 3️⃣ 查目前房號
 目前房號
@@ -297,7 +297,7 @@ ${vipData.expire_date}`);
     if (!vip && !isAdmin) return replyText(client, event.replyToken, needVip());
     const cur = await getCurrentRoom(userId);
     if (!cur) return replyText(client, event.replyToken, "目前使用：一般路單\n\n可輸入：DG RB01 或 MT 百家樂1");
-    return replyText(client, event.replyToken, `目前房號：\n${cur.room_type} ${cur.room_code}\n\n之後直接按：莊 / 閒 / 和`);
+    return replyText(client, event.replyToken, `目前房號：\n${cur.room_type} ${cur.room_code}\n\n之後直接按：莊  閒  和`);
   }
   if (text === "切換一般") {
     if (!vip && !isAdmin) return replyText(client, event.replyToken, needVip());
